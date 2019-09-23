@@ -27,6 +27,6 @@ public class Config {
 	public static final String SERVER_2 = "s2";
 	public static final String SERVER_3 = "s3";
 
-	public static final String FOLDER_PATH = "/home/eng/a/axn180041/mutex/";// s1/file1.txt
+	public static final String FOLDER_PATH = "/home/eng/a/axn180041/mutex/";
 	public static final String FILE_EXT = ".txt";
 }
