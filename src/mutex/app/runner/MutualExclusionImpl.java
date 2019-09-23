@@ -2,6 +2,7 @@ package mutex.app.runner;
 
 import java.io.PrintWriter;
 
+import mutex.app.utils.Config;
 import mutex.app.utils.Utils;
 
 public class MutualExclusionImpl {
@@ -11,7 +12,7 @@ public class MutualExclusionImpl {
 	public int seqNum;
 	public int processnum;
 	public PrintWriter[] w;
-	public int channelCount = 4;
+	public int channelCount = Config.PROCESS_CHANNELS;
 	public boolean[] replyDeferred;
 
 	public MutualExclusionImpl(int processnum, int seqNum) {

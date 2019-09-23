@@ -1,13 +1,12 @@
-package mutex.app.server;
+package test;
 
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 
-import mutex.app.utils.Config;
 import mutex.app.utils.Utils;
 
-public class Server3 {
+public class Server1Test {
 	static int i = 1;
 
 	public static void main(String[] args) throws IOException {
@@ -17,8 +16,8 @@ public class Server3 {
 			ss = new ServerSocket(6666);
 			while (true) {
 				s = ss.accept();
-				Utils.log("Server3: New client request received : " + s);
-				ServerHandler mtch = new ServerHandler("new handler for client " + i, s, Config.SERVER_3);
+				Utils.log("Server1: New client request received : " + s);
+				ServerHandlerTest mtch = new ServerHandlerTest("new handler for client " + i, s);
 				Thread t = new Thread(mtch);
 				t.start();
 				i++;

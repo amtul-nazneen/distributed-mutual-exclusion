@@ -22,6 +22,8 @@ public class Client2 {
 
 	PrintWriter w1, w3, w4, w5;
 	BufferedReader r1, r3, r4, r5;
+	PrintWriter writeToServer1, writeToServer2, writeToServer3;
+	BufferedReader readFromServer1, readFromServer2, readFromServer3;
 
 	public static void main(String[] args) throws IOException {
 		Client2 client2 = new Client2();
@@ -37,8 +39,8 @@ public class Client2 {
 		try {
 			// connects to the server1, server2, server3
 			server1 = new Socket("dc01.utdallas.edu", 6666);
-			// server2 = new Socket("dc02.utdallas.edu", 6666);
-			// server3 = new Socket("dc03.utdallas.edu", 6666);
+			server2 = new Socket("dc02.utdallas.edu", 6666);
+			server3 = new Socket("dc03.utdallas.edu", 6666);
 
 			// connects to client1 // creates sockets for client3, client4, client5
 			s1 = new Socket("dc04.utdallas.edu", 6662);
@@ -49,6 +51,13 @@ public class Client2 {
 			s3 = ss3.accept();
 			s4 = ss4.accept();
 			s5 = ss5.accept();
+
+			writeToServer1 = new PrintWriter(server1.getOutputStream(), true);
+			readFromServer1 = new BufferedReader(new InputStreamReader(server1.getInputStream()));
+			writeToServer2 = new PrintWriter(server2.getOutputStream(), true);
+			readFromServer2 = new BufferedReader(new InputStreamReader(server2.getInputStream()));
+			writeToServer3 = new PrintWriter(server3.getOutputStream(), true);
+			readFromServer3 = new BufferedReader(new InputStreamReader(server3.getInputStream()));
 
 			w1 = new PrintWriter(s1.getOutputStream(), true);
 			r1 = new BufferedReader(new InputStreamReader(s1.getInputStream()));
@@ -69,12 +78,10 @@ public class Client2 {
 			ClientHandler css3 = new ClientHandler(s3, meimpl);
 			ClientHandler css4 = new ClientHandler(s4, meimpl);
 			ClientHandler css5 = new ClientHandler(s5, meimpl);
-
 			Thread t1 = new Thread(css1);
 			Thread t3 = new Thread(css3);
 			Thread t4 = new Thread(css4);
 			Thread t5 = new Thread(css5);
-
 			t1.start();
 			t3.start();
 			t4.start();
@@ -95,12 +102,12 @@ public class Client2 {
 		} catch (Exception e) {
 			Utils.log(e.getMessage());
 			server1.close();
-			// server2.close();
-			// server3.close();
+			server2.close();
+			server3.close();
 		}
 	}
 
-	public void requestCS() {
+	public void requestCS() throws Exception {
 		int attempt = counter + 1;
 		Utils.log("Entering RequestCS, Process:" + processnum + " #CS_Access: " + attempt);
 		meimpl.invocation();
@@ -109,14 +116,48 @@ public class Client2 {
 		Utils.log("Exiting RequestCS, Process:" + processnum + " #CS_Access: " + attempt);
 	}
 
-	public void criticalSection(int processnum, int counter) {
+	public void criticalSection(int processnum, int counter) throws Exception {
 		int attempt = counter + 1;
 		Utils.log("***>> Starting CS - Process: " + processnum + " #CS_Access: " + attempt);
 		try {
+			Utils.log("Client2 doing a write");
+			writeToServer();
 			Thread.sleep(Config.CLIENT2_CSEXEC);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
 		Utils.log("***>> Completed CS - Process: " + processnum + " #CS_Access: " + attempt);
+	}
+
+	public void readFromServer() throws Exception {
+		Utils.log("Reading from server");
+		writeToServer1.println("read,file1");
+		String reply;
+		Utils.log("Sent the request, Waiting for reply");
+		boolean gotReply = false;
+		while (!gotReply) {
+
+			reply = readFromServer1.readLine();
+			if (reply != null) {
+				Utils.log("Received reply:-->" + reply);
+				gotReply = true;
+			}
+		}
+	}
+
+	public void writeToServer() throws Exception {
+		Utils.log("Writing to server");
+		writeToServer1.println("write,file1," + Config.WRITE_MESSAGE + processnum);
+		String reply;
+		Utils.log("Sent the request, Waiting for reply");
+		boolean gotReply = false;
+		while (!gotReply) {
+
+			reply = readFromServer1.readLine();
+			if (reply != null) {
+				Utils.log("Received reply:-->" + reply);
+				gotReply = true;
+			}
+		}
 	}
 }

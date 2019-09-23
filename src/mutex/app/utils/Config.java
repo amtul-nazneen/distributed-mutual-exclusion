@@ -19,4 +19,14 @@ public class Config {
 	public static final int CLIENT4_CSEXEC = 3000;
 	public static final int CLIENT5_CSEXEC = 3000;
 
+	public static final int PROCESS_CHANNELS = 4;
+
+	public static final String WRITE_MESSAGE = "Written by Process:";
+
+	public static final String SERVER_1 = "s1";
+	public static final String SERVER_2 = "s2";
+	public static final String SERVER_3 = "s3";
+
+	public static final String FOLDER_PATH = "/home/eng/a/axn180041/mutex/";// s1/file1.txt
+	public static final String FILE_EXT = ".txt";
 }

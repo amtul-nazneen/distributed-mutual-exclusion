@@ -1,11 +1,10 @@
 package mutex.app.server;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 
+import mutex.app.utils.Config;
 import mutex.app.utils.Utils;
 
 public class Server1 {
@@ -19,9 +18,7 @@ public class Server1 {
 			while (true) {
 				s = ss.accept();
 				Utils.log("Server1: New client request received : " + s);
-				DataInputStream dis = new DataInputStream(s.getInputStream());
-				DataOutputStream dos = new DataOutputStream(s.getOutputStream());
-				ServerHandler mtch = new ServerHandler("new handler for client " + i, dis, dos, s);
+				ServerHandler mtch = new ServerHandler("new handler for client " + i, s, Config.SERVER_1);
 				Thread t = new Thread(mtch);
 				t.start();
 				i++;

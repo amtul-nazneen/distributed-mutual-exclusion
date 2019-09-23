@@ -1,4 +1,4 @@
-package mutex.app.server;
+package test;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -10,21 +10,18 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 
-import mutex.app.utils.Config;
 import mutex.app.utils.Utils;
 
-public class ServerHandler implements Runnable {
+public class ServerHandlerTest implements Runnable {
 	String name;
 	Socket s;
 	BufferedReader reader;
 	PrintWriter writer;
-	String server;
 
-	public ServerHandler(String name, Socket s, String server) {
+	public ServerHandlerTest(String name, Socket s) {
 		super();
 		this.s = s;
 		this.name = name;
-		this.server = server;
 		try {
 			InputStreamReader iReader = new InputStreamReader(s.getInputStream());
 			reader = new BufferedReader(iReader);
@@ -48,9 +45,8 @@ public class ServerHandler implements Runnable {
 				String file = tokens[1];
 				Utils.log("Operation:" + operation + " File:" + file);
 				String lastLine = "";
-				String accessFile = Config.FOLDER_PATH + server + "/" + file + Config.FILE_EXT;
 				if (operation.equalsIgnoreCase("read")) {
-					filereader = new BufferedReader(new FileReader(accessFile));
+					filereader = new BufferedReader(new FileReader("/home/eng/a/axn180041/mutex/s1/file1.txt"));
 					while ((sCurrentLine = filereader.readLine()) != null) {
 						Utils.log(sCurrentLine);
 						lastLine = sCurrentLine;
@@ -61,7 +57,7 @@ public class ServerHandler implements Runnable {
 				} else {
 					String clientdata = tokens[2];
 					Utils.log("Data to write: " + clientdata);
-					File f = new File(accessFile);
+					File f = new File("/home/eng/a/axn180041/mutex/s1/file1.txt");
 					FileWriter fw = new FileWriter(f, true);
 					BufferedWriter filewriter = new BufferedWriter(fw);
 					filewriter.write(clientdata + "\n");
