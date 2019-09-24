@@ -1,6 +1,8 @@
-package mutex.app.runner;
+package mutex.app.impl;
 
 import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.Collections;
 
 import mutex.app.utils.Config;
 import mutex.app.utils.Utils;
@@ -14,6 +16,7 @@ public class MutualExclusionImpl {
 	public PrintWriter[] w;
 	public int channelCount = Config.PROCESS_CHANNELS;
 	public boolean[] replyDeferred;
+	public ArrayList<DeferredReply> deferredReplies;
 
 	public MutualExclusionImpl(int processnum, int seqNum) {
 		bRequestingCS = false;
@@ -23,6 +26,7 @@ public class MutualExclusionImpl {
 		w = new PrintWriter[channelCount];
 		this.processnum = processnum;
 		replyDeferred = new boolean[channelCount];
+		deferredReplies = new ArrayList<DeferredReply>();
 	}
 
 	public boolean invocation() {
@@ -64,15 +68,28 @@ public class MutualExclusionImpl {
 		Utils.log("Entering ReleaseCS, Process:" + processnum, false);
 		bRequestingCS = false;
 
-		for (int i = 0; i < channelCount; i++) {
-			if (replyDeferred[i]) {
-				replyDeferred[i] = false;
-				if (i < (processnum - 1))
-					replyTo(i + 1);
-				else
-					replyTo(i + 2);
-			}
+		Utils.log("Deferred Replies total: " + deferredReplies.size());
+		Utils.log("Deferred Replies: Before sorting");
+		for (DeferredReply dr : deferredReplies)
+			Utils.log(dr.toString());
+
+		Utils.log("Deferred Replies: After sorting");
+		Collections.sort(deferredReplies, DeferredReply.drcomp);
+		for (DeferredReply dr : deferredReplies)
+			Utils.log(dr.toString());
+
+		Utils.log("Deferred Replies that are to be: After sorting");
+		for (DeferredReply dr : deferredReplies) {
+			Utils.log("Reply to be sent to process:" + dr.getProcessNum());
+			replyTo(dr.getProcessNum());
 		}
+		/*
+		 * for (int i = 0; i < channelCount; i++) { if (replyDeferred[i]) {
+		 * replyDeferred[i] = false; if (i < (processnum - 1)) replyTo(i + 1); else
+		 * replyTo(i + 2); } }
+		 */
+		deferredReplies.clear();
+		Utils.log("Clearing Deferred Replies, size now:" + deferredReplies.size());
 		Utils.log("Exiting ReleaseCS, Process:" + processnum, false);
 		Utils.log("Done ReleaseCS, Process:" + processnum);
 	}
@@ -82,14 +99,17 @@ public class MutualExclusionImpl {
 		boolean bDefer = false;
 
 		highestSeqNum = Math.max(highestSeqNum, j);
-		Utils.log("HighestSeqNum now is: " + highestSeqNum);
+		Utils.log("HighestSeqNum in my process is now: " + highestSeqNum);
 		bDefer = bRequestingCS && ((j > seqNum) || (j == seqNum && k > processnum));
 		if (bDefer) {
 			Utils.log("$$$-->DEFERRED sending message to Process:" + k);
-			if (k > processnum)
+			if (k > processnum) {
 				replyDeferred[k - 2] = true;
-			else
+				deferredReplies.add(new DeferredReply(true, k, j));
+			} else {
 				replyDeferred[k - 1] = true;
+				deferredReplies.add(new DeferredReply(true, k, j));
+			}
 		} else {
 			replyTo(k);
 		}

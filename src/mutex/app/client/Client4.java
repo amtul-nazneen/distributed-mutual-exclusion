@@ -1,4 +1,4 @@
-package mutex.app.runner;
+package mutex.app.client;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -8,6 +8,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.Random;
 
+import mutex.app.impl.MutualExclusionImpl;
 import mutex.app.utils.Config;
 import mutex.app.utils.Utils;
 

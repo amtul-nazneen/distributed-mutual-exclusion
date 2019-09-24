@@ -7,7 +7,7 @@ import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
 
-import mutex.app.runner.MutualExclusionImpl;
+import mutex.app.impl.MutualExclusionImpl;
 import mutex.app.utils.Utils;
 
 public class ClientTest {

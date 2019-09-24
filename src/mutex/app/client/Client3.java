@@ -1,4 +1,4 @@
-package mutex.app.runner;
+package mutex.app.client;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -8,47 +8,50 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.Random;
 
+import mutex.app.impl.MutualExclusionImpl;
 import mutex.app.utils.Config;
 import mutex.app.utils.Utils;
 
-public class Client2 {
+public class Client3 {
 	MutualExclusionImpl meimpl;
-	int processnum = 2;
+	int processnum = 3;
 	int counter = 0;
 
 	Socket server1 = null, server2 = null, server3 = null;
-	Socket s1, s3, s4, s5;
-	ServerSocket ss3, ss4, ss5;
+	Socket s2, s1, s4, s5;
+	ServerSocket ss4, ss5;
 
-	PrintWriter w1, w3, w4, w5;
-	BufferedReader r1, r3, r4, r5;
+	PrintWriter w1, w2, w4, w5;
+	BufferedReader r1, r2, r4, r5;
 	PrintWriter writeToServer1, writeToServer2, writeToServer3;
 	BufferedReader readFromServer1, readFromServer2, readFromServer3;
 
 	public static void main(String[] args) throws IOException {
-		Client2 client2 = new Client2();
+		Client3 client3 = new Client3();
 		try {
-			client2.startClient2();
+			client3.startClient3();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
 
-	public void startClient2() throws Exception {
+	public void startClient3() throws Exception {
 
 		try {
+
 			// connects to the server1, server2, server3
 			server1 = new Socket("dc01.utdallas.edu", 6666);
 			server2 = new Socket("dc02.utdallas.edu", 6666);
 			server3 = new Socket("dc03.utdallas.edu", 6666);
 
-			// connects to client1 // creates sockets for client3, client4, client5
-			s1 = new Socket("dc04.utdallas.edu", 6662);
-			ss3 = new ServerSocket(6663);
+			// connects to client1
+			s1 = new Socket("dc04.utdallas.edu", 6663);
+			s2 = new Socket("dc05.utdallas.edu", 6663);
+
+			// creates sockets for client3, client4, client5
+
 			ss4 = new ServerSocket(6664);
 			ss5 = new ServerSocket(6665);
-
-			s3 = ss3.accept();
 			s4 = ss4.accept();
 			s5 = ss5.accept();
 
@@ -61,8 +64,8 @@ public class Client2 {
 
 			w1 = new PrintWriter(s1.getOutputStream(), true);
 			r1 = new BufferedReader(new InputStreamReader(s1.getInputStream()));
-			w3 = new PrintWriter(s3.getOutputStream(), true);
-			r3 = new BufferedReader(new InputStreamReader(s3.getInputStream()));
+			w2 = new PrintWriter(s2.getOutputStream(), true);
+			r2 = new BufferedReader(new InputStreamReader(s2.getInputStream()));
 			w4 = new PrintWriter(s4.getOutputStream(), true);
 			r4 = new BufferedReader(new InputStreamReader(s4.getInputStream()));
 			w5 = new PrintWriter(s5.getOutputStream(), true);
@@ -70,24 +73,26 @@ public class Client2 {
 
 			meimpl = new MutualExclusionImpl(processnum, 0);
 			meimpl.w[0] = w1;
-			meimpl.w[1] = w3;
+			meimpl.w[1] = w2;
 			meimpl.w[2] = w4;
 			meimpl.w[3] = w5;
 
 			ClientHandler css1 = new ClientHandler(s1, meimpl);
-			ClientHandler css3 = new ClientHandler(s3, meimpl);
+			ClientHandler css2 = new ClientHandler(s2, meimpl);
 			ClientHandler css4 = new ClientHandler(s4, meimpl);
 			ClientHandler css5 = new ClientHandler(s5, meimpl);
+
 			Thread t1 = new Thread(css1);
-			Thread t3 = new Thread(css3);
+			Thread t2 = new Thread(css2);
 			Thread t4 = new Thread(css4);
 			Thread t5 = new Thread(css5);
+
 			t1.start();
-			t3.start();
+			t2.start();
 			t4.start();
 			t5.start();
 
-			while (counter < Config.CLIENT2_CSLIMIT) {
+			while (counter < Config.CLIENT3_CSLIMIT) {
 				try {
 					requestCS();
 					counter++;
@@ -120,9 +125,9 @@ public class Client2 {
 		int attempt = counter + 1;
 		Utils.log("***>> Starting CS - Process: " + processnum + " #CS_Access: " + attempt);
 		try {
-			Utils.log("Client2 doing a write");
+			Utils.log("Client3 doing a write");
 			writeToServer();
-			Thread.sleep(Config.CLIENT2_CSEXEC);
+			Thread.sleep(Config.CLIENT3_CSEXEC);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}

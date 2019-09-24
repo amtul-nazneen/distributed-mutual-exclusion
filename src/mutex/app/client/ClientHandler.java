@@ -1,4 +1,4 @@
-package mutex.app.runner;
+package mutex.app.client;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -6,6 +6,7 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 
+import mutex.app.impl.MutualExclusionImpl;
 import mutex.app.utils.Utils;
 
 public class ClientHandler implements Runnable {

@@ -1,4 +1,4 @@
-package mutex.app.runner;
+package mutex.app.client;
 
 public class Main {
 
