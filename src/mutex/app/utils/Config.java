@@ -2,7 +2,7 @@ package mutex.app.utils;
 
 public class Config {
 	public static final int CLIENT1_CSLIMIT = 1;
-	public static final int CLIENT2_CSLIMIT = 2;
+	public static final int CLIENT2_CSLIMIT = 1;
 	public static final int CLIENT3_CSLIMIT = 1;
 	public static final int CLIENT4_CSLIMIT = 4;
 	public static final int CLIENT5_CSLIMIT = 1;

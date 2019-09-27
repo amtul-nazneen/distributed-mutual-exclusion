@@ -36,7 +36,6 @@ public class ServerHandler implements Runnable {
 
 	@Override
 	public void run() {
-		System.out.println("Running a new thread for " + this.name);
 		String message;
 		String sCurrentLine;
 		BufferedReader filereader;
@@ -45,11 +44,12 @@ public class ServerHandler implements Runnable {
 			while ((message = reader.readLine()) != null) {
 				String tokens[] = message.split(",");
 				String operation = tokens[0];
-				String file = tokens[1];
-				Utils.log("Operation:" + operation + " File:" + file);
-				String lastLine = "";
-				String accessFile = Config.FOLDER_PATH + server + "/" + file + Config.FILE_EXT;
+
 				if (operation.equalsIgnoreCase("read")) {
+					String file = tokens[1];
+					Utils.log("Operation:" + operation + " File:" + file);
+					String lastLine = "";
+					String accessFile = Config.FOLDER_PATH + server + "/" + file + Config.FILE_EXT;
 					filereader = new BufferedReader(new FileReader(accessFile));
 					while ((sCurrentLine = filereader.readLine()) != null) {
 						Utils.log(sCurrentLine);
@@ -58,7 +58,10 @@ public class ServerHandler implements Runnable {
 					Utils.log("Lastline:-->" + lastLine);
 					Utils.log("From server: Sending the reply");
 					writer.println("READ:-->" + lastLine);
-				} else {
+				} else if (operation.equalsIgnoreCase("write")) {
+					String file = tokens[1];
+					Utils.log("Operation:" + operation + " File:" + file);
+					String accessFile = Config.FOLDER_PATH + server + "/" + file + Config.FILE_EXT;
 					String clientdata = tokens[2];
 					Utils.log("Data to write: " + clientdata);
 					File f = new File(accessFile);
@@ -70,12 +73,17 @@ public class ServerHandler implements Runnable {
 					Utils.log("Finished writing data to file");
 					Utils.log("From server: Sending the reply");
 					writer.println("WROTE:-->" + clientdata);
+				} else if (operation.equalsIgnoreCase("enquire")) {
+					String processnum = tokens[1];
+					Utils.log("Received enquire from the process:" + processnum);
+					String files = "file1.txt,file2.txt,file3.txt,file4.txt";
+					Utils.log("From server: Sending the reply");
+					writer.println("ENQUIRE result:-->" + files);
 				}
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-
 	}
 
 }

@@ -7,18 +7,20 @@ import java.net.Socket;
 import mutex.app.utils.Config;
 import mutex.app.utils.Utils;
 
-public class Server3 {
+public class Server {
 	static int i = 1;
 
 	public static void main(String[] args) throws IOException {
 		ServerSocket ss = null;
 		Socket s = null;
+
 		try {
 			ss = new ServerSocket(6666);
+			// Utils.log("Server:" + ss.getInetAddress());
 			while (true) {
 				s = ss.accept();
-				Utils.log("Server3: New client request received : " + s);
-				ServerHandler mtch = new ServerHandler("new handler for client " + i, s, Config.SERVER_3);
+				Utils.log("New client request received : " + s.getInetAddress());
+				ServerHandler mtch = new ServerHandler("new handler for client " + i, s, Config.SERVER_1);
 				Thread t = new Thread(mtch);
 				t.start();
 				i++;

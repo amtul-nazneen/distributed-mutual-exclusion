@@ -6,6 +6,7 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.ArrayList;
 import java.util.Random;
 
 import mutex.app.impl.MutualExclusionImpl;
@@ -25,6 +26,8 @@ public class Client1 {
 	BufferedReader r2, r3, r4, r5;
 	PrintWriter writeToServer1, writeToServer2, writeToServer3;
 	BufferedReader readFromServer1, readFromServer2, readFromServer3;
+
+	ArrayList<String> serverFiles;
 
 	public static void main(String[] args) throws IOException {
 		Client1 client1 = new Client1();
@@ -161,4 +164,28 @@ public class Client1 {
 		}
 	}
 
+	public void enquireToServer() throws Exception {
+		Utils.log("Enquiring from server");
+		writeToServer1.println("enquire," + processnum);
+		Utils.log("Sent the enquire, waiting for reply");
+		boolean gotReply = false;
+		String reply = "";
+		while (!gotReply) {
+			reply = readFromServer1.readLine();
+			if (reply != null) {
+				Utils.log("Received reply-->:" + reply);
+				gotReply = true;
+			}
+		}
+		Utils.log("Saving the list of available server files");
+		serverFiles = new ArrayList<String>();
+		String files[] = reply.split(",");
+		for (int i = 0; i < files.length; i++)
+			serverFiles.add(files[i]);
+		Utils.log("List of files at server are:");
+		String output = "";
+		for (String file : serverFiles)
+			output += file + ",";
+		Utils.log(output);
+	}
 }
