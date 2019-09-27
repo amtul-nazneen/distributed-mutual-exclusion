@@ -76,9 +76,9 @@ public class ServerHandler implements Runnable {
 				} else if (operation.equalsIgnoreCase("enquire")) {
 					String processnum = tokens[1];
 					Utils.log("Received enquire from the process:" + processnum);
-					String files = "file1.txt,file2.txt,file3.txt,file4.txt";
-					Utils.log("From server: Sending the reply");
-					writer.println("ENQUIRE result:-->" + files);
+					String files = Config.SERVER_FILES;
+					Utils.log("From server: Sending ENQUIRE result");
+					writer.println(files);
 				}
 			}
 		} catch (Exception e) {

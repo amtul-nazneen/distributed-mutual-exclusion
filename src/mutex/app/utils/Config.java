@@ -29,4 +29,6 @@ public class Config {
 
 	public static final String FOLDER_PATH = "/home/eng/a/axn180041/mutex/";
 	public static final String FILE_EXT = ".txt";
+
+	public static final String SERVER_FILES = "file1.txt,file2.txt,file3.txt,file4.txt";
 }

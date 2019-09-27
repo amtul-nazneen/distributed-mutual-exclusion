@@ -1,14 +1,13 @@
-package mutex.app.client;
+package mutex.app.client.clients;
 
 import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.ArrayList;
 import java.util.Random;
 
+import mutex.app.client.ClientHandler;
 import mutex.app.impl.MutualExclusionImpl;
 import mutex.app.utils.Config;
 import mutex.app.utils.Utils;
@@ -27,21 +26,12 @@ public class Client3 {
 	PrintWriter writeToServer1, writeToServer2, writeToServer3;
 	BufferedReader readFromServer1, readFromServer2, readFromServer3;
 
-	ArrayList<String> serverFiles;
-
-	public static void main(String[] args) throws IOException {
-		Client3 client3 = new Client3();
-		try {
-			client3.startClient3();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
+	String[] serverFiles;
 
 	public void startClient3() throws Exception {
 
 		try {
-
+			Utils.log("In startClient3");
 			// connects to the server1, server2, server3
 			server1 = new Socket("dc01.utdallas.edu", 6666);
 			server2 = new Socket("dc02.utdallas.edu", 6666);
@@ -184,14 +174,9 @@ public class Client3 {
 			}
 		}
 		Utils.log("Saving the list of available server files");
-		serverFiles = new ArrayList<String>();
-		String files[] = reply.split(",");
-		for (int i = 0; i < files.length; i++)
-			serverFiles.add(files[i]);
-		Utils.log("List of files at server are:");
-		String output = "";
-		for (String file : serverFiles)
-			output += file + ",";
-		Utils.log(output);
+		serverFiles = new String[3];
+		serverFiles = reply.split(",");
+		for (int i = 0; i < serverFiles.length; i++)
+			Utils.log(serverFiles[i]);
 	}
 }
