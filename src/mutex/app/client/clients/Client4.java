@@ -5,7 +5,6 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.Random;
 
 import mutex.app.client.ClientHandler;
 import mutex.app.impl.MutualExclusionImpl;
@@ -14,7 +13,7 @@ import mutex.app.utils.Utils;
 
 public class Client4 {
 
-	MutualExclusionImpl meimpl;
+	MutualExclusionImpl myMutexImpl;
 	int processnum = 4;
 	int counter = 0;
 
@@ -62,16 +61,16 @@ public class Client4 {
 			w5 = new PrintWriter(s5.getOutputStream(), true);
 			r5 = new BufferedReader(new InputStreamReader(s5.getInputStream()));
 
-			meimpl = new MutualExclusionImpl(processnum, 0);
-			meimpl.w[0] = w1;
-			meimpl.w[1] = w2;
-			meimpl.w[2] = w3;
-			meimpl.w[3] = w5;
+			myMutexImpl = new MutualExclusionImpl(processnum, 0);
+			myMutexImpl.writerForChannel[0] = w1;
+			myMutexImpl.writerForChannel[1] = w2;
+			myMutexImpl.writerForChannel[2] = w3;
+			myMutexImpl.writerForChannel[3] = w5;
 
-			ClientHandler css1 = new ClientHandler(s1, meimpl);
-			ClientHandler css2 = new ClientHandler(s2, meimpl);
-			ClientHandler css3 = new ClientHandler(s3, meimpl);
-			ClientHandler css5 = new ClientHandler(s5, meimpl);
+			ClientHandler css1 = new ClientHandler(s1, myMutexImpl);
+			ClientHandler css2 = new ClientHandler(s2, myMutexImpl);
+			ClientHandler css3 = new ClientHandler(s3, myMutexImpl);
+			ClientHandler css5 = new ClientHandler(s5, myMutexImpl);
 			Thread t1 = new Thread(css1);
 			Thread t2 = new Thread(css2);
 			Thread t3 = new Thread(css3);
@@ -84,8 +83,7 @@ public class Client4 {
 				try {
 					requestCS();
 					counter++;
-					Random num = new Random();
-					Thread.sleep(num.nextInt(500));
+					Thread.sleep((long) (Math.random() * 1000));
 				} catch (Exception e) {
 					Utils.log(e.getMessage());
 				}
@@ -100,16 +98,16 @@ public class Client4 {
 		}
 	}
 
-	public void requestCS() throws Exception {
+	private void requestCS() throws Exception {
 		int attempt = counter + 1;
 		Utils.log("Entering RequestCS, Process:" + processnum + " #CS_Access: " + attempt);
-		meimpl.invocation();
+		myMutexImpl.myCSRequestBegin();
 		criticalSection(processnum, counter);
-		meimpl.releaseCS();
+		myMutexImpl.myCSRequestEnd();
 		Utils.log("Exiting RequestCS, Process:" + processnum + " #CS_Access: " + attempt);
 	}
 
-	public void criticalSection(int processnum, int counter) throws Exception {
+	private void criticalSection(int processnum, int counter) throws Exception {
 		int attempt = counter + 1;
 		Utils.log("***>> Starting CS - Process: " + processnum + " #CS_Access: " + attempt);
 		try {
@@ -122,7 +120,7 @@ public class Client4 {
 		Utils.log("***>> Completed CS - Process: " + processnum + " #CS_Access: " + attempt);
 	}
 
-	public void readFromServer() throws Exception {
+	private void readFromServer() throws Exception {
 		Utils.log("Reading from server");
 		writeToServer1.println("read,file1");
 		String reply;
@@ -138,9 +136,9 @@ public class Client4 {
 		}
 	}
 
-	public void writeToServer() throws Exception {
+	private void writeToServer() throws Exception {
 		Utils.log("Writing to server");
-		writeToServer1.println("write,file1," + Config.WRITE_MESSAGE + processnum);
+		writeToServer1.println("write,file1," + Config.WRITE_MESSAGE + processnum + " at " + Utils.getTimestamp());
 		String reply;
 		Utils.log("Sent the request, Waiting for reply");
 		boolean gotReply = false;
@@ -154,7 +152,7 @@ public class Client4 {
 		}
 	}
 
-	public void enquireToServer() throws Exception {
+	private void enquireToServer() throws Exception {
 		Utils.log("Enquiring from server");
 		writeToServer2.println("enquire," + processnum);
 		Utils.log("Sent the enquire, waiting for reply");

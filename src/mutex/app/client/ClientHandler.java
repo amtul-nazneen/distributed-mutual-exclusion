@@ -13,12 +13,12 @@ public class ClientHandler implements Runnable {
 	BufferedReader reader;
 	PrintWriter writer;
 	Socket s;
-	MutualExclusionImpl meimpl;
+	MutualExclusionImpl mutexImpl;
 
-	public ClientHandler(Socket s, MutualExclusionImpl meimpl) {
+	public ClientHandler(Socket s, MutualExclusionImpl mutexImpl) {
 		super();
 		this.s = s;
-		this.meimpl = meimpl;
+		this.mutexImpl = mutexImpl;
 		try {
 			InputStreamReader iReader = new InputStreamReader(s.getInputStream());
 			reader = new BufferedReader(iReader);
@@ -41,9 +41,9 @@ public class ClientHandler implements Runnable {
 					if (messageType.equals("REPLY"))
 						Utils.log("$$$-->Received [" + messageType + "]" + " from " + host);
 					if (messageType.equals("REQUEST")) {
-						meimpl.receiveRequest(Integer.parseInt(tokens[1]), Integer.parseInt(tokens[2]));
+						mutexImpl.myReceivedRequest(Integer.parseInt(tokens[1]), Integer.parseInt(tokens[2]));
 					} else if (messageType.equals("REPLY")) {
-						meimpl.receiveReply();
+						mutexImpl.myReceivedReply();
 					}
 				}
 

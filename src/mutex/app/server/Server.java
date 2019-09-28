@@ -29,6 +29,9 @@ public class Server {
 			System.out.println(e);
 			if (ss != null)
 				ss.close();
+		} finally {
+			Utils.log("Closing the socket");
+			ss.close();
 		}
 	}
 }
