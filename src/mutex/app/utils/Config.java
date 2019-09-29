@@ -2,9 +2,9 @@ package mutex.app.utils;
 
 public class Config {
 	public static final int CLIENT1_CSLIMIT = 1;
-	public static final int CLIENT2_CSLIMIT = 2;
+	public static final int CLIENT2_CSLIMIT = 1;
 	public static final int CLIENT3_CSLIMIT = 1;
-	public static final int CLIENT4_CSLIMIT = 4;
+	public static final int CLIENT4_CSLIMIT = 1;
 	public static final int CLIENT5_CSLIMIT = 1;
 
 	public static final int CLIENT1_SLEEP = 1000;
@@ -29,6 +29,34 @@ public class Config {
 
 	public static final String FOLDER_PATH = "/home/eng/a/axn180041/mutex/";
 	public static final String FILE_EXT = ".txt";
+	public static final String EOL = "\n";
 
 	public static final String SERVER_FILES = "file1.txt,file2.txt,file3.txt,file4.txt";
+	public static final String FILE1 = "file1";
+	public static final String FILE2 = "file2";
+	public static final String FILE3 = "file3";
+	public static final String FILE4 = "file4";
+
+	public static final int SERVER_PORT = 6666;
+	public static final int CLIENT2_PORT = 6662;
+	public static final int CLIENT3_PORT = 6663;
+	public static final int CLIENT4_PORT = 6664;
+	public static final int CLIENT5_PORT = 6665;
+	public static final String DC_PROC1 = "dc04.utdallas.edu";
+	public static final String DC_PROC2 = "dc05.utdallas.edu";
+	public static final String DC_PROC3 = "dc06.utdallas.edu";
+	public static final String DC_PROC4 = "dc07.utdallas.edu";
+	public static final String DC_PROC5 = "dc08.utdallas.edu";
+	public static final String SERVER1_HOST = "dc01.utdallas.edu";
+	public static final String SERVER2_HOST = "dc02.utdallas.edu";
+	public static final String SERVER3_HOST = "dc03.utdallas.edu";
+
+	public static final String READ = "read";
+	public static final String WRITE = "write";
+	public static final String ENQUIRE = "enquire";
+	public static final String REPLY = "REPLY";
+	public static final String REQUEST = "REQUEST";
+
+	public static final String FORMAT = "yyyy-MM-dd HH:mm:ss.SSS";
+	public static final String ZONE = "GMT-05:00";
 }

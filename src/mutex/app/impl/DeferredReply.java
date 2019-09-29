@@ -1,17 +1,20 @@
 package mutex.app.impl;
 
+import java.sql.Timestamp;
 import java.util.Comparator;
+
+import mutex.app.utils.Utils;
 
 public class DeferredReply implements Comparable<DeferredReply> {
 	public boolean isDeferred;
-	public int seqNum;
-	public int processNum;
+	private int processNum;
+	private Timestamp timestamp;
 
-	public DeferredReply(boolean isDeferred, int processNum, int seqNum) {
+	public DeferredReply(boolean isDeferred, int processNum, Timestamp timestamp) {
 		super();
 		this.isDeferred = isDeferred;
 		this.processNum = processNum;
-		this.seqNum = seqNum;
+		this.timestamp = timestamp;
 	}
 
 	public boolean isDeferred() {
@@ -22,14 +25,6 @@ public class DeferredReply implements Comparable<DeferredReply> {
 		this.isDeferred = isDeferred;
 	}
 
-	public int getSeqNum() {
-		return seqNum;
-	}
-
-	public void setSeqNum(int seqNum) {
-		this.seqNum = seqNum;
-	}
-
 	public int getProcessNum() {
 		return processNum;
 	}
@@ -38,16 +33,24 @@ public class DeferredReply implements Comparable<DeferredReply> {
 		this.processNum = processNum;
 	}
 
-	@Override
-	public int compareTo(DeferredReply o) {
-		return this.seqNum - o.getSeqNum();
+	public Timestamp getTimestamp() {
+		return timestamp;
 	}
 
-	public static final Comparator<DeferredReply> drcomp = new Comparator<DeferredReply>() {
+	public void setTimestamp(Timestamp timestamp) {
+		this.timestamp = timestamp;
+	}
+
+	@Override
+	public int compareTo(DeferredReply o) {
+		return this.processNum - o.getProcessNum();
+	}
+
+	public static final Comparator<DeferredReply> DREP_COMP = new Comparator<DeferredReply>() {
 
 		@Override
 		public int compare(DeferredReply o1, DeferredReply o2) {
-			int c = o1.getSeqNum() - o2.getSeqNum();
+			int c = Utils.compareTimestamp(o1.getTimestamp(), o2.getTimestamp());
 			if (c == 0)
 				c = o1.getProcessNum() - o2.getProcessNum();
 			return c;
@@ -57,7 +60,8 @@ public class DeferredReply implements Comparable<DeferredReply> {
 
 	@Override
 	public String toString() {
-		return "DeferredReply [isDeferred=" + isDeferred + ", seqNum=" + seqNum + ", processNum=" + processNum + "]";
+		return "DeferredReply [isDeferred=" + isDeferred + ", processNum=" + processNum + ", timestamp=" + timestamp
+				+ "]";
 	}
 
 }

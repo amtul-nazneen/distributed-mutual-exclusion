@@ -5,19 +5,21 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.sql.Timestamp;
 
 import mutex.app.impl.MutualExclusionImpl;
+import mutex.app.utils.Config;
 import mutex.app.utils.Utils;
 
 public class ClientHandler implements Runnable {
 	BufferedReader reader;
 	PrintWriter writer;
-	Socket s;
+	Socket socket;
 	MutualExclusionImpl mutexImpl;
 
 	public ClientHandler(Socket s, MutualExclusionImpl mutexImpl) {
 		super();
-		this.s = s;
+		this.socket = s;
 		this.mutexImpl = mutexImpl;
 		try {
 			InputStreamReader iReader = new InputStreamReader(s.getInputStream());
@@ -36,13 +38,15 @@ public class ClientHandler implements Runnable {
 
 					String tokens[] = message.split(",");
 					String messageType = tokens[0];
-					String host = s.getInetAddress().getHostName().toUpperCase();
+
+					String host = socket.getInetAddress().getHostName().toUpperCase();
 					host = Utils.getProcessFromHost(host);
-					if (messageType.equals("REPLY"))
-						Utils.log("$$$-->Received [" + messageType + "]" + " from " + host);
-					if (messageType.equals("REQUEST")) {
-						mutexImpl.myReceivedRequest(Integer.parseInt(tokens[1]), Integer.parseInt(tokens[2]));
-					} else if (messageType.equals("REPLY")) {
+
+					if (messageType.equals(Config.REQUEST)) {
+						mutexImpl.myReceivedRequest(Timestamp.valueOf(tokens[1]), Integer.parseInt(tokens[2]),
+								tokens[3]);
+					} else if (messageType.equals(Config.REPLY)) {
+						Utils.log("$$$-->Received [REPLY]" + " from " + host);
 						mutexImpl.myReceivedReply();
 					}
 				}

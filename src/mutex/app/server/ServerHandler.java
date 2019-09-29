@@ -14,21 +14,19 @@ import mutex.app.utils.Config;
 import mutex.app.utils.Utils;
 
 public class ServerHandler implements Runnable {
-	String name;
-	Socket s;
+	Socket socket;
 	BufferedReader reader;
 	PrintWriter writer;
-	String server;
+	String serverFolder;
 
-	public ServerHandler(String name, Socket s, String server) {
+	public ServerHandler(Socket socket, String serverName) {
 		super();
-		this.s = s;
-		this.name = name;
-		this.server = server;
+		this.socket = socket;
+		this.serverFolder = serverName;
 		try {
-			InputStreamReader iReader = new InputStreamReader(s.getInputStream());
+			InputStreamReader iReader = new InputStreamReader(socket.getInputStream());
 			reader = new BufferedReader(iReader);
-			writer = new PrintWriter(s.getOutputStream(), true);
+			writer = new PrintWriter(socket.getOutputStream(), true);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -45,11 +43,11 @@ public class ServerHandler implements Runnable {
 				String tokens[] = message.split(",");
 				String operation = tokens[0];
 
-				if (operation.equalsIgnoreCase("read")) {
+				if (operation.equalsIgnoreCase(Config.READ)) {
 					String file = tokens[1];
 					Utils.log("Operation:" + operation + " File:" + file);
 					String lastLine = "";
-					String accessFile = Config.FOLDER_PATH + server + "/" + file + Config.FILE_EXT;
+					String accessFile = Config.FOLDER_PATH + serverFolder + "/" + file + Config.FILE_EXT;
 					filereader = new BufferedReader(new FileReader(accessFile));
 					while ((sCurrentLine = filereader.readLine()) != null) {
 						Utils.log(sCurrentLine);
@@ -58,25 +56,26 @@ public class ServerHandler implements Runnable {
 					Utils.log("Lastline:-->" + lastLine);
 					Utils.log("From server: Sending the reply");
 					writer.println("READ:-->" + lastLine);
-				} else if (operation.equalsIgnoreCase("write")) {
+				} else if (operation.equalsIgnoreCase(Config.WRITE)) {
 					String file = tokens[1];
 					Utils.log("Operation:" + operation + " File:" + file);
-					String accessFile = Config.FOLDER_PATH + server + "/" + file + Config.FILE_EXT;
+					String accessFile = Config.FOLDER_PATH + serverFolder + "/" + file + Config.FILE_EXT;
 					String clientdata = tokens[2];
 					Utils.log("Data to write: " + clientdata);
 					File f = new File(accessFile);
 					FileWriter fw = new FileWriter(f, true);
 					BufferedWriter filewriter = new BufferedWriter(fw);
-					filewriter.write(clientdata + "\n");
+					filewriter.write(clientdata + Config.EOL);
 					filewriter.close();
 					fw.close();
 					Utils.log("Finished writing data to file");
 					Utils.log("From server: Sending the reply");
 					writer.println("WROTE:-->" + clientdata);
-				} else if (operation.equalsIgnoreCase("enquire")) {
+				} else if (operation.equalsIgnoreCase(Config.ENQUIRE)) {
 					String processnum = tokens[1];
 					Utils.log("Received enquire from the process:" + processnum);
 					String files = Config.SERVER_FILES;
+					// TODO
 					Utils.log("From server: Sending ENQUIRE result");
 					writer.println(files);
 				}

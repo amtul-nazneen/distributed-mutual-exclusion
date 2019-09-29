@@ -1,47 +1,43 @@
 package mutex.app.impl;
 
 import java.io.PrintWriter;
+import java.sql.Timestamp;
 
+import mutex.app.utils.Config;
 import mutex.app.utils.Utils;
 
 public class MutualExclusionHelper {
-	public static void sendRequestToProcess(int sequenceNum, int ownerProcessnum, int receivingProcessNum,
-			PrintWriter[] writer) {
-		Utils.log("$$$-->Sending REQUEST to Process:" + receivingProcessNum + ",Seqnum:" + sequenceNum);
+
+	public static void sendRequestToProcess(Timestamp ownerTimestamp, int ownerProcessnum, int receivingProcessNum,
+			String fileName, PrintWriter[] writer) {
+		Utils.log("$$$-->Sending REQUEST to Process:" + receivingProcessNum + ",Timestamp:" + ownerTimestamp + " ,File:"
+				+ fileName);
 		int x = mapProcessNumToWriterIndex(ownerProcessnum, receivingProcessNum);
-		writer[x].println("REQUEST," + sequenceNum + "," + ownerProcessnum);
-		/*
-		 * if (i > processnum) { writer[i - 2].println("REQUEST," + seqNum + "," +
-		 * processnum); } else { writer[i - 1].println("REQUEST," + seqNum + "," +
-		 * processnum); }
-		 */
+		writer[x].println(Config.REQUEST + "," + ownerTimestamp + "," + ownerProcessnum + "," + fileName);
 	}
 
 	public static void sendReplyToProcess(int receivingProcessNum, PrintWriter[] writer, int ownerProcessnum) {
 		Utils.log("Sending REPLY to Process:" + receivingProcessNum);
 		int x = mapProcessNumToWriterIndex(ownerProcessnum, receivingProcessNum);
-		writer[x].println("REPLY," + receivingProcessNum);
-		/*
-		 * if (k > processnum) { writer[k - 2].println("REPLY," + k); } else { writer[k
-		 * - 1].println("REPLY," + k); }
-		 */
+		writer[x].println(Config.REPLY + "," + receivingProcessNum);
 	}
 
-	public static boolean evaluateDeferCondition(boolean requestedCSFlag, int senderSeqNum, int mySequenceNum,
-			int senderProcessNum, int myProcessNum) {
+	public static boolean evaluateDeferCondition(boolean requestedCSFlag, Timestamp senderTimestamp,
+			Timestamp ownerTimestamp, int senderProcessNum, int ownerProcessNum, String senderFileName,
+			String myFileName) {
 		boolean defer = false;
-		if (requestedCSFlag) {
-			if (senderSeqNum > mySequenceNum) {
+		int comparisionOutcome = Utils.compareTimestamp(senderTimestamp, ownerTimestamp);
+		boolean sameFile = checkFileSame(myFileName, senderFileName);
+		if (requestedCSFlag && sameFile) {
+			if (comparisionOutcome == 1) {
 				defer = true;
-			} else if (senderSeqNum == mySequenceNum) {
-				if (senderProcessNum > myProcessNum) {
+			} else if (comparisionOutcome == 0) {
+				if (senderProcessNum > ownerProcessNum) {
 					defer = true;
 				}
 			}
 		}
 		return defer;
-//		status = requestedCSFlag
-//				&& ((senderSeqNum > mySequenceNum) || (senderSeqNum == mySequenceNum && senderProcessNum > processnum));
 	}
 
 	private static int mapProcessNumToWriterIndex(int ownerProcess, int receivingProcessNum) {
@@ -52,4 +48,24 @@ public class MutualExclusionHelper {
 
 	}
 
+	private static boolean checkFileSame(String ownerFileName, String senderFileName) {
+		boolean result = false;
+		if (ownerFileName != null && !ownerFileName.isEmpty()) {
+			if (ownerFileName.equalsIgnoreCase(senderFileName)) {
+				result = true;
+			}
+		}
+		return result;
+
+	}
+
+	public static void assignChannelWriters(MutualExclusionImpl mutexImpl, PrintWriter w1, PrintWriter w2,
+			PrintWriter w3, PrintWriter w4) {
+		PrintWriter pw[] = mutexImpl.getWriterForChannel();
+		pw[0] = w1;
+		pw[1] = w2;
+		pw[2] = w3;
+		pw[3] = w4;
+		mutexImpl.setWriterForChannel(pw);
+	}
 }
