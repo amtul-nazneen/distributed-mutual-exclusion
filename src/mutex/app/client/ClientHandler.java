@@ -8,7 +8,7 @@ import java.net.Socket;
 import java.sql.Timestamp;
 
 import mutex.app.impl.MutualExclusionImpl;
-import mutex.app.utils.Config;
+import mutex.app.utils.Constants;
 import mutex.app.utils.Utils;
 
 public class ClientHandler implements Runnable {
@@ -42,10 +42,10 @@ public class ClientHandler implements Runnable {
 					String host = socket.getInetAddress().getHostName().toUpperCase();
 					host = Utils.getProcessFromHost(host);
 
-					if (messageType.equals(Config.REQUEST)) {
+					if (messageType.equals(Constants.REQUEST)) {
 						mutexImpl.myReceivedRequest(Timestamp.valueOf(tokens[1]), Integer.parseInt(tokens[2]),
 								tokens[3]);
-					} else if (messageType.equals(Config.REPLY)) {
+					} else if (messageType.equals(Constants.REPLY)) {
 						Utils.log("$$$-->Received [REPLY]" + " from " + host);
 						mutexImpl.myReceivedReply();
 					}

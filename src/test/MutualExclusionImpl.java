@@ -3,7 +3,7 @@ package test;
 /** backup before the change to buffered reader order*/
 import java.io.PrintWriter;
 
-import mutex.app.utils.Config;
+import mutex.app.utils.Constants;
 import mutex.app.utils.Utils;
 
 public class MutualExclusionImpl {
@@ -13,7 +13,7 @@ public class MutualExclusionImpl {
 	public int seqNum;
 	public int processnum;
 	public PrintWriter[] w;
-	public int channelCount = Config.PROCESS_CHANNELS;
+	public int channelCount = Constants.PROCESS_CHANNELS;
 	public boolean[] replyDeferred;
 
 	public MutualExclusionImpl(int processnum, int seqNum) {

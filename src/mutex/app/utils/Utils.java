@@ -12,8 +12,8 @@ public class Utils {
 	public static HashMap<String, String> hosttoprocess = new HashMap<String, String>();
 
 	public static String getTimestampForLog() {
-		LocalDateTime date = LocalDateTime.now(ZoneId.of(Config.ZONE));
-		return "[" + date.format(DateTimeFormatter.ofPattern(Config.FORMAT)) + "]";
+		LocalDateTime date = LocalDateTime.now(ZoneId.of(Constants.ZONE));
+		return "[" + date.format(DateTimeFormatter.ofPattern(Constants.FORMAT)) + "]";
 	}
 
 	public static void log(String message) {
@@ -26,11 +26,11 @@ public class Utils {
 	}
 
 	public static String getProcessFromHost(String host) {
-		hosttoprocess.put(Config.DC_PROC1, "Process:1");
-		hosttoprocess.put(Config.DC_PROC2, "Process:2");
-		hosttoprocess.put(Config.DC_PROC3, "Process:3");
-		hosttoprocess.put(Config.DC_PROC4, "Process:4");
-		hosttoprocess.put(Config.DC_PROC5, "Process:5");
+		hosttoprocess.put(Constants.DC_PROC1, "Process:1");
+		hosttoprocess.put(Constants.DC_PROC2, "Process:2");
+		hosttoprocess.put(Constants.DC_PROC3, "Process:3");
+		hosttoprocess.put(Constants.DC_PROC4, "Process:4");
+		hosttoprocess.put(Constants.DC_PROC5, "Process:5");
 		return hosttoprocess.get(host.toLowerCase());
 	}
 

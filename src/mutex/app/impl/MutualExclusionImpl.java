@@ -5,7 +5,7 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Collections;
 
-import mutex.app.utils.Config;
+import mutex.app.utils.Constants;
 import mutex.app.utils.Utils;
 
 public class MutualExclusionImpl {
@@ -24,9 +24,9 @@ public class MutualExclusionImpl {
 	}
 
 	private void init() {
-		myPendingReplyCount = Config.PROCESS_CHANNELS;
+		myPendingReplyCount = Constants.PROCESS_CHANNELS;
 		myRequestTimestamp = null;
-		writerForChannel = new PrintWriter[Config.PROCESS_CHANNELS];
+		writerForChannel = new PrintWriter[Constants.PROCESS_CHANNELS];
 		myDeferredReplies = new ArrayList<DeferredReply>();
 		rcOptimize = new ArrayList<Integer>();
 		myFileName = "";
@@ -36,10 +36,10 @@ public class MutualExclusionImpl {
 		myRequestCSFlag = true;
 		myRequestTimestamp = time;
 		myFileName = fileName;
-		myPendingReplyCount = Config.PROCESS_CHANNELS;
+		myPendingReplyCount = Constants.PROCESS_CHANNELS;
 		{
 			// Utils.log("Optimized requests list is empty");
-			int total = Config.PROCESS_CHANNELS + 1;
+			int total = Constants.PROCESS_CHANNELS + 1;
 			for (int i = 1; i <= total; i++) {
 				if (i != myProcessNum) {
 

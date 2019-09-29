@@ -1,6 +1,6 @@
 package mutex.app.utils;
 
-public class Config {
+public class Constants {
 	public static final int CLIENT1_CSLIMIT = 1;
 	public static final int CLIENT2_CSLIMIT = 1;
 	public static final int CLIENT3_CSLIMIT = 1;

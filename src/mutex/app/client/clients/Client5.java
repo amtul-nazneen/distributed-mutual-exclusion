@@ -10,7 +10,7 @@ import java.sql.Timestamp;
 import mutex.app.client.ClientHandler;
 import mutex.app.impl.MutualExclusionHelper;
 import mutex.app.impl.MutualExclusionImpl;
-import mutex.app.utils.Config;
+import mutex.app.utils.Constants;
 import mutex.app.utils.Utils;
 
 public class Client5 {
@@ -39,7 +39,7 @@ public class Client5 {
 			createMutexImplementor();
 			startChannelThreads();
 
-			while (counter < Config.CLIENT5_CSLIMIT) {
+			while (counter < Constants.CLIENT5_CSLIMIT) {
 				try {
 					requestForCSaccess();
 					counter++;
@@ -71,7 +71,7 @@ public class Client5 {
 		Utils.log("***>> Starting CS_Access: " + attempt);
 		try {
 			readFromServer();
-			Thread.sleep(Config.CLIENT5_CSEXEC);
+			Thread.sleep(Constants.CLIENT5_CSEXEC);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
@@ -80,7 +80,7 @@ public class Client5 {
 
 	private void readFromServer() throws Exception {
 		Utils.log("Reading from server");
-		writeToServer1.println(Config.READ + "," + "file3");
+		writeToServer1.println(Constants.READ + "," + "file3");
 		String reply;
 		Utils.log("Sent the request, Waiting for reply");
 		boolean gotReply = false;
@@ -94,7 +94,7 @@ public class Client5 {
 	}
 
 	private void writeToServer() throws Exception {
-		writeToServer1.println(Config.WRITE + "," + "file3" + "," + Config.WRITE_MESSAGE + processnum + " at "
+		writeToServer1.println(Constants.WRITE + "," + "file3" + "," + Constants.WRITE_MESSAGE + processnum + " at "
 				+ myMutexImpl.getMyRequestTimestamp());
 		String reply;
 		boolean gotReply = false;
@@ -108,7 +108,7 @@ public class Client5 {
 
 	private void enquireToServer() throws Exception {
 		Utils.log("Enquiring from server");
-		writeToServer3.println(Config.ENQUIRE + "," + processnum);
+		writeToServer3.println(Constants.ENQUIRE + "," + processnum);
 		Utils.log("Sent the enquire, waiting for reply");
 		boolean gotReply = false;
 		String reply = "";
@@ -127,16 +127,16 @@ public class Client5 {
 	}
 
 	private void connectToServer() throws Exception {
-		server1 = new Socket(Config.SERVER1_HOST, Config.SERVER_PORT);
-		server2 = new Socket(Config.SERVER2_HOST, Config.SERVER_PORT);
-		server3 = new Socket(Config.SERVER3_HOST, Config.SERVER_PORT);
+		server1 = new Socket(Constants.SERVER1_HOST, Constants.SERVER_PORT);
+		server2 = new Socket(Constants.SERVER2_HOST, Constants.SERVER_PORT);
+		server3 = new Socket(Constants.SERVER3_HOST, Constants.SERVER_PORT);
 	}
 
 	private void connectToOtherClients() throws Exception {
-		s1 = new Socket(Config.DC_PROC1, Config.CLIENT5_PORT);
-		s2 = new Socket(Config.DC_PROC2, Config.CLIENT5_PORT);
-		s3 = new Socket(Config.DC_PROC3, Config.CLIENT5_PORT);
-		s4 = new Socket(Config.DC_PROC4, Config.CLIENT5_PORT);
+		s1 = new Socket(Constants.DC_PROC1, Constants.CLIENT5_PORT);
+		s2 = new Socket(Constants.DC_PROC2, Constants.CLIENT5_PORT);
+		s3 = new Socket(Constants.DC_PROC3, Constants.CLIENT5_PORT);
+		s4 = new Socket(Constants.DC_PROC4, Constants.CLIENT5_PORT);
 	}
 
 	private void createServerIOStream() throws Exception {

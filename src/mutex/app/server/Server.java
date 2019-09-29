@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 
-import mutex.app.utils.Config;
+import mutex.app.utils.Constants;
 import mutex.app.utils.Utils;
 
 public class Server {
@@ -18,13 +18,13 @@ public class Server {
 		String id = args[0];
 		String serverName = null;
 		if ("1".equals(id)) {
-			serverName = Config.SERVER_1;
+			serverName = Constants.SERVER_1;
 			Utils.log("Starting Server:1");
 		} else if ("2".equals(id)) {
-			serverName = Config.SERVER_2;
+			serverName = Constants.SERVER_2;
 			Utils.log("Starting Server:2");
 		} else if ("3".equals(id)) {
-			serverName = Config.SERVER_3;
+			serverName = Constants.SERVER_3;
 			Utils.log("Starting Server:3");
 		}
 
@@ -32,7 +32,7 @@ public class Server {
 		Socket s = null;
 
 		try {
-			ss = new ServerSocket(Config.SERVER_PORT);
+			ss = new ServerSocket(Constants.SERVER_PORT);
 			while (true) {
 				s = ss.accept();
 				Utils.log("Client:" + i + " connected");

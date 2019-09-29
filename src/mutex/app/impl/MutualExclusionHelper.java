@@ -3,7 +3,7 @@ package mutex.app.impl;
 import java.io.PrintWriter;
 import java.sql.Timestamp;
 
-import mutex.app.utils.Config;
+import mutex.app.utils.Constants;
 import mutex.app.utils.Utils;
 
 public class MutualExclusionHelper {
@@ -13,13 +13,13 @@ public class MutualExclusionHelper {
 		Utils.log("$$$-->Sending REQUEST to Process:" + receivingProcessNum + ",Timestamp:" + ownerTimestamp + " ,File:"
 				+ fileName);
 		int x = mapProcessNumToWriterIndex(ownerProcessnum, receivingProcessNum);
-		writer[x].println(Config.REQUEST + "," + ownerTimestamp + "," + ownerProcessnum + "," + fileName);
+		writer[x].println(Constants.REQUEST + "," + ownerTimestamp + "," + ownerProcessnum + "," + fileName);
 	}
 
 	public static void sendReplyToProcess(int receivingProcessNum, PrintWriter[] writer, int ownerProcessnum) {
 		Utils.log("Sending REPLY to Process:" + receivingProcessNum);
 		int x = mapProcessNumToWriterIndex(ownerProcessnum, receivingProcessNum);
-		writer[x].println(Config.REPLY + "," + receivingProcessNum);
+		writer[x].println(Constants.REPLY + "," + receivingProcessNum);
 	}
 
 	public static boolean evaluateDeferCondition(boolean requestedCSFlag, Timestamp senderTimestamp,
