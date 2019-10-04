@@ -16,7 +16,7 @@ public class MutualExclusionImpl {
 	private Timestamp myRequestTimestamp;
 	private PrintWriter[] writerForChannel;
 	private ArrayList<DeferredReply> myDeferredReplies;
-	private ArrayList<Integer> rcOptimize;
+	//private ArrayList<Integer> rcOptimize;
 
 	public MutualExclusionImpl(int processnum) {
 		this.myProcessNum = processnum;
@@ -28,7 +28,7 @@ public class MutualExclusionImpl {
 		myRequestTimestamp = null;
 		writerForChannel = new PrintWriter[Constants.PROCESS_CHANNELS];
 		myDeferredReplies = new ArrayList<DeferredReply>();
-		rcOptimize = new ArrayList<Integer>();
+	//	rcOptimize = new ArrayList<Integer>();
 		myFileName = "";
 	}
 
@@ -83,13 +83,13 @@ public class MutualExclusionImpl {
 	}
 
 	public void myReceivedRequest(Timestamp senderTimestamp, int senderProcessNum, String senderFileName) {
-		Utils.log("$$$-->Received REQUEST from Process:" + senderProcessNum + " ,Sender Timestamp:" + senderTimestamp
-				+ ", File:" + senderFileName);
+		Utils.log("-->Received REQUEST from Process:" + senderProcessNum + " ,SenderTimestamp:" + senderTimestamp
+				+ " ,File:" + senderFileName);
 
 		boolean deferOutcome = MutualExclusionHelper.evaluateDeferCondition(myRequestCSFlag, senderTimestamp,
 				myRequestTimestamp, senderProcessNum, myProcessNum, senderFileName, myFileName);
 		if (deferOutcome) {
-			Utils.log("$$$-->DEFERRED sending message to Process:" + senderProcessNum);
+			Utils.log("-->DEFERRED sending message to Process:" + senderProcessNum);
 			myDeferredReplies.add(new DeferredReply(true, senderProcessNum, senderTimestamp));
 
 		} else {

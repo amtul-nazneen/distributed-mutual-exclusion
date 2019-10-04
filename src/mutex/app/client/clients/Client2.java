@@ -6,6 +6,8 @@ import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.Collections;
 
 import mutex.app.client.ClientHandler;
 import mutex.app.impl.MutualExclusionHelper;
@@ -26,8 +28,10 @@ public class Client2 {
 	BufferedReader r1, r3, r4, r5;
 	PrintWriter writeToServer1, writeToServer2, writeToServer3;
 	BufferedReader readFromServer1, readFromServer2, readFromServer3;
-
-	String[] serverFiles;
+	
+	ArrayList<String> serverFileList;
+	static final String FILE="file2";
+	static final String TASK="read";
 
 	public void startClient2() throws Exception {
 
@@ -38,7 +42,7 @@ public class Client2 {
 			createChannelIOStream();
 			createMutexImplementor();
 			startChannelThreads();
-
+			enquireToServer();
 			while (counter < Constants.CLIENT2_CSLIMIT) {
 				try {
 					requestForCSaccess();
@@ -61,7 +65,7 @@ public class Client2 {
 		int attempt = counter + 1;
 		Timestamp myRequestTime = Utils.getTimestamp();
 		Utils.log("Begin CS_Access: " + attempt + " Timestamp: " + "[" + myRequestTime + "]");
-		myMutexImpl.myCSRequestBegin(myRequestTime, "file1");
+		myMutexImpl.myCSRequestBegin(myRequestTime, FILE);
 		executeCriticalSection(processnum, counter);
 		myMutexImpl.myCSRequestEnd();
 		Utils.log("End CS_Access: " + attempt + " Timestamp: " + "[" + Utils.getTimestamp() + "]");
@@ -69,35 +73,42 @@ public class Client2 {
 
 	private void executeCriticalSection(int processnum, int counter) throws Exception {
 		int attempt = counter + 1;
-		Utils.log("***>> Starting CS_Access: " + attempt);
+		Utils.log("======= Starting  CS_Access: " + attempt + " ===========");
 		try {
-			readFromServer();
+			if("read".equalsIgnoreCase(TASK))
+				readFromServer();
+			else if("write".equalsIgnoreCase(TASK))
+			    writeToAllServers();
 			Thread.sleep(Constants.CLIENT2_CSEXEC);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
-		Utils.log("***>> Completed CS_Access: " + attempt);
+		Utils.log("======= Completed CS_Access: " + attempt + " ===========");
 	}
 
 	private void readFromServer() throws Exception {
 		Utils.log("Reading from server");
-		writeToServer1.println(Constants.READ + "," + "file1");
+		writeToServer1.println(Constants.READ + "," + FILE);
 		String reply;
 		Utils.log("Sent the request, Waiting for reply");
 		boolean gotReply = false;
 		while (!gotReply) {
 			reply = readFromServer1.readLine();
 			if (reply != null) {
-				Utils.log("Received reply:-->" + reply);
+				Utils.log("Read from server:-->" + "{ " + reply + " } ");
 				gotReply = true;
 			}
 		}
 	}
 
-	private void writeToServer() throws Exception {
-		writeToServer1.println(Constants.WRITE + "," + "file1" + "," + Constants.WRITE_MESSAGE + processnum + " at "
+	private void writeToAllServers() throws Exception {
+		writeToServer1.println(Constants.WRITE + "," + FILE + "," + Constants.WRITE_MESSAGE + processnum + " at "
 				+ myMutexImpl.getMyRequestTimestamp());
-		String reply;
+		writeToServer2.println(Constants.WRITE + "," + FILE + "," + Constants.WRITE_MESSAGE + processnum + " at "
+				+ myMutexImpl.getMyRequestTimestamp());
+		writeToServer3.println(Constants.WRITE + "," + FILE + "," + Constants.WRITE_MESSAGE + processnum + " at "
+				+ myMutexImpl.getMyRequestTimestamp());
+		String reply = null;
 		boolean gotReply = false;
 		while (!gotReply) {
 			reply = readFromServer1.readLine();
@@ -105,26 +116,42 @@ public class Client2 {
 				gotReply = true;
 			}
 		}
-	}
-
-	private void enquireToServer() throws Exception {
-		Utils.log("Enquiring from server");
-		writeToServer2.println(Constants.ENQUIRE + "," + processnum);
-		Utils.log("Sent the enquire, waiting for reply");
-		boolean gotReply = false;
-		String reply = "";
+		Utils.log("Got reply from Server1:"+reply);
+		
+		gotReply = false;
 		while (!gotReply) {
 			reply = readFromServer2.readLine();
 			if (reply != null) {
-				Utils.log("Received reply-->:" + reply);
 				gotReply = true;
 			}
 		}
-		Utils.log("Saving the list of available server files");
-		serverFiles = new String[3];
-		serverFiles = reply.split(",");
-		for (int i = 0; i < serverFiles.length; i++)
-			Utils.log(serverFiles[i]);
+		Utils.log("Got reply from Server2:"+reply);
+		
+		gotReply = false;
+		while (!gotReply) {
+			reply = readFromServer3.readLine();
+			if (reply != null) {
+				gotReply = true;
+			}
+		}
+		Utils.log("Got reply from Server3:"+reply);
+	}
+	private void enquireToServer() throws Exception {
+		writeToServer1.println(Constants.ENQUIRE + "," + processnum);
+		boolean gotReply = false;
+		String reply = "";
+		while (!gotReply) {
+			reply = readFromServer1.readLine();
+			if (reply != null) {
+				gotReply = true;
+			}
+		}
+		Utils.log("Saving enquired server files");
+		String temp[] = reply.split(",");
+		serverFileList = new ArrayList<String>();
+		for (int i = 0; i < temp.length; i++)
+			serverFileList.add(temp[i]);
+		Collections.sort(serverFileList);
 	}
 
 	private void connectToServer() throws Exception {
@@ -141,6 +168,7 @@ public class Client2 {
 		s3 = ss3.accept();
 		s4 = ss4.accept();
 		s5 = ss5.accept();
+
 	}
 
 	private void createServerIOStream() throws Exception {
@@ -155,12 +183,14 @@ public class Client2 {
 	private void createChannelIOStream() throws Exception {
 		w1 = new PrintWriter(s1.getOutputStream(), true);
 		r1 = new BufferedReader(new InputStreamReader(s1.getInputStream()));
+
 		w3 = new PrintWriter(s3.getOutputStream(), true);
 		r3 = new BufferedReader(new InputStreamReader(s3.getInputStream()));
 		w4 = new PrintWriter(s4.getOutputStream(), true);
 		r4 = new BufferedReader(new InputStreamReader(s4.getInputStream()));
 		w5 = new PrintWriter(s5.getOutputStream(), true);
 		r5 = new BufferedReader(new InputStreamReader(s5.getInputStream()));
+
 	}
 
 	private void createMutexImplementor() {
@@ -173,14 +203,17 @@ public class Client2 {
 		ClientHandler css3 = new ClientHandler(s3, myMutexImpl);
 		ClientHandler css4 = new ClientHandler(s4, myMutexImpl);
 		ClientHandler css5 = new ClientHandler(s5, myMutexImpl);
+
 		Thread t1 = new Thread(css1);
 		Thread t3 = new Thread(css3);
 		Thread t4 = new Thread(css4);
 		Thread t5 = new Thread(css5);
+
 		t1.start();
 		t3.start();
 		t4.start();
 		t5.start();
+
 	}
 
 }

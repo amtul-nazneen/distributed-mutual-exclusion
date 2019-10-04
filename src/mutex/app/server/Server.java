@@ -8,7 +8,7 @@ import mutex.app.utils.Constants;
 import mutex.app.utils.Utils;
 
 public class Server {
-	static int i = 1;
+	static int clientId = 1;
 
 	public static void main(String[] args) throws IOException {
 		if (args.length < 1) {
@@ -19,12 +19,15 @@ public class Server {
 		String serverName = null;
 		if ("1".equals(id)) {
 			serverName = Constants.SERVER_1;
+			Utils.empty();
 			Utils.log("Starting Server:1");
 		} else if ("2".equals(id)) {
 			serverName = Constants.SERVER_2;
+			Utils.empty();
 			Utils.log("Starting Server:2");
 		} else if ("3".equals(id)) {
 			serverName = Constants.SERVER_3;
+			Utils.empty();
 			Utils.log("Starting Server:3");
 		}
 
@@ -35,11 +38,11 @@ public class Server {
 			ss = new ServerSocket(Constants.SERVER_PORT);
 			while (true) {
 				s = ss.accept();
-				Utils.log("Client:" + i + " connected");
-				ServerHandler clientThread = new ServerHandler(s, serverName);
+				Utils.log("Client:" + clientId + " connected");
+				ServerHandler clientThread = new ServerHandler(s, serverName,clientId);
 				Thread t = new Thread(clientThread);
 				t.start();
-				i++;
+				clientId++;
 			}
 		} catch (Exception e) {
 			e.printStackTrace();

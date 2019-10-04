@@ -46,7 +46,7 @@ public class ClientHandler implements Runnable {
 						mutexImpl.myReceivedRequest(Timestamp.valueOf(tokens[1]), Integer.parseInt(tokens[2]),
 								tokens[3]);
 					} else if (messageType.equals(Constants.REPLY)) {
-						Utils.log("$$$-->Received [REPLY]" + " from " + host);
+						Utils.log("-->Received REPLY" + " from " + host);
 						mutexImpl.myReceivedReply();
 					}
 				}

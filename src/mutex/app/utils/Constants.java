@@ -1,11 +1,11 @@
 package mutex.app.utils;
 
 public class Constants {
-	public static final int CLIENT1_CSLIMIT = 1;
-	public static final int CLIENT2_CSLIMIT = 1;
-	public static final int CLIENT3_CSLIMIT = 1;
-	public static final int CLIENT4_CSLIMIT = 1;
-	public static final int CLIENT5_CSLIMIT = 1;
+	public static final int CLIENT1_CSLIMIT = 20;
+	public static final int CLIENT2_CSLIMIT = 20;
+	public static final int CLIENT3_CSLIMIT = 20;
+	public static final int CLIENT4_CSLIMIT = 20;
+	public static final int CLIENT5_CSLIMIT = 20;
 
 	public static final int CLIENT1_SLEEP = 1000;
 	public static final int CLIENT2_SLEEP = 2000;
@@ -31,7 +31,6 @@ public class Constants {
 	public static final String FILE_EXT = ".txt";
 	public static final String EOL = "\n";
 
-	public static final String SERVER_FILES = "file1.txt,file2.txt,file3.txt,file4.txt";
 	public static final String FILE1 = "file1";
 	public static final String FILE2 = "file2";
 	public static final String FILE3 = "file3";

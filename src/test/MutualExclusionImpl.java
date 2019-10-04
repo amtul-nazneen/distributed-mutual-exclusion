@@ -53,7 +53,7 @@ public class MutualExclusionImpl {
 	}
 
 	public void requestTo(int seqNum, int processnum, int i) {
-		Utils.log("$$$-->Sending REQUEST to Process:" + (((i))) + ",Seqnum:" + seqNum);
+		Utils.log("-->Sending REQUEST to Process:" + (((i))) + ",Seqnum:" + seqNum);
 		if (i > processnum) {
 			w[i - 2].println("REQUEST," + seqNum + "," + processnum);
 		} else {
@@ -79,14 +79,14 @@ public class MutualExclusionImpl {
 	}
 
 	public void receiveRequest(int j, int k) {
-		Utils.log("$$$-->Received REQUEST from Process:" + k + ",Seqnum:" + j);
+		Utils.log("-->Received REQUEST from Process:" + k + ",Seqnum:" + j);
 		boolean bDefer = false;
 
 		highestSeqNum = Math.max(highestSeqNum, j);
 		Utils.log("HighestSeqNum now is: " + highestSeqNum);
 		bDefer = bRequestingCS && ((j > seqNum) || (j == seqNum && k > processnum));
 		if (bDefer) {
-			Utils.log("$$$-->DEFERRED sending message to Process:" + k);
+			Utils.log("-->DEFERRED sending message to Process:" + k);
 			if (k > processnum)
 				replyDeferred[k - 2] = true;
 			else

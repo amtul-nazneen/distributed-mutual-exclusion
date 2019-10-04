@@ -49,5 +49,15 @@ public class Utils {
 		}
 		return c;
 	}
+	
+	public static void empty()
+	{
+	}
+	public static void logWithSeparator(String message)
+	{
+		String separator=" ********* ******** ******** ";
+		System.out.println(getTimestampForLog() + separator + message + separator);
+	}
+	
 
 }
