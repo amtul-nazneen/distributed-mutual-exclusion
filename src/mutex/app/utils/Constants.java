@@ -28,6 +28,7 @@ public class Constants {
 	public static final String SERVER_3 = "s3";
 
 	public static final String FOLDER_PATH = "/home/eng/a/axn180041/mutex/";
+	// public static final String FOLDER_PATH = "/Users/amtulnazneen/Downloads/";
 	public static final String FILE_EXT = ".txt";
 	public static final String EOL = "\n";
 
