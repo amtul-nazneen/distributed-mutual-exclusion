@@ -8,6 +8,7 @@ import java.net.Socket;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 
 import mutex.app.client.ClientHandler;
 import mutex.app.impl.MutualExclusionHelper;
@@ -28,13 +29,18 @@ public class Client2 {
 	BufferedReader r1, r3, r4, r5;
 	PrintWriter writeToServer1, writeToServer2, writeToServer3;
 	BufferedReader readFromServer1, readFromServer2, readFromServer3;
-	
+
 	ArrayList<String> serverFileList;
-	static final String FILE="file2";
-	static final String TASK="read";
+	ArrayList<String> serverList;
+	ArrayList<String> taskList;
+	HashMap<String, PrintWriter> serverToWriter;
+	HashMap<String, BufferedReader> serverToReader;
+
+	String SERVER = "";
+	String FILE = "";
+	String TASK = "";
 
 	public void startClient2() throws Exception {
-
 		try {
 			connectToServer();
 			connectToOtherClients();
@@ -42,9 +48,10 @@ public class Client2 {
 			createChannelIOStream();
 			createMutexImplementor();
 			startChannelThreads();
-			enquireToServer();
+			init();
 			while (counter < Constants.CLIENT2_CSLIMIT) {
 				try {
+					setRandomRequestParams();
 					requestForCSaccess();
 					counter++;
 					Thread.sleep((long) (Math.random() * 1000));
@@ -73,27 +80,27 @@ public class Client2 {
 
 	private void executeCriticalSection(int processnum, int counter) throws Exception {
 		int attempt = counter + 1;
-		Utils.log("======= Starting  CS_Access: " + attempt + " ===========");
+		Utils.log("======= Starting  CS_Access: [[[[[[[[[" + attempt + "]]]]]]]]] ===========");
 		try {
-			if("read".equalsIgnoreCase(TASK))
+			if (Constants.READ.equalsIgnoreCase(TASK))
 				readFromServer();
-			else if("write".equalsIgnoreCase(TASK))
-			    writeToAllServers();
+			else if (Constants.WRITE.equalsIgnoreCase(TASK))
+				writeToAllServers();
 			Thread.sleep(Constants.CLIENT2_CSEXEC);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
-		Utils.log("======= Completed CS_Access: " + attempt + " ===========");
+		Utils.log("======= Completed CS_Access: [[[[[[[[[" + attempt + "]]]]]]]]] ===========");
 	}
 
 	private void readFromServer() throws Exception {
-		Utils.log("Reading from server");
-		writeToServer1.println(Constants.READ + "," + FILE);
+		PrintWriter writeToServer = serverToWriter.get(SERVER);// writeToServer1;
+		BufferedReader readFromServer = serverToReader.get(SERVER); // readFromServer1;
+		writeToServer.println(Constants.READ + "," + FILE);
 		String reply;
-		Utils.log("Sent the request, Waiting for reply");
 		boolean gotReply = false;
 		while (!gotReply) {
-			reply = readFromServer1.readLine();
+			reply = readFromServer.readLine();
 			if (reply != null) {
 				Utils.log("Read from server:-->" + "{ " + reply + " } ");
 				gotReply = true;
@@ -116,8 +123,8 @@ public class Client2 {
 				gotReply = true;
 			}
 		}
-		Utils.log("Got reply from Server1:"+reply);
-		
+		Utils.log("Got reply from Server1:" + reply);
+
 		gotReply = false;
 		while (!gotReply) {
 			reply = readFromServer2.readLine();
@@ -125,8 +132,8 @@ public class Client2 {
 				gotReply = true;
 			}
 		}
-		Utils.log("Got reply from Server2:"+reply);
-		
+		Utils.log("Got reply from Server2:" + reply);
+
 		gotReply = false;
 		while (!gotReply) {
 			reply = readFromServer3.readLine();
@@ -134,8 +141,9 @@ public class Client2 {
 				gotReply = true;
 			}
 		}
-		Utils.log("Got reply from Server3:"+reply);
+		Utils.log("Got reply from Server3:" + reply);
 	}
+
 	private void enquireToServer() throws Exception {
 		writeToServer1.println(Constants.ENQUIRE + "," + processnum);
 		boolean gotReply = false;
@@ -162,6 +170,7 @@ public class Client2 {
 
 	private void connectToOtherClients() throws Exception {
 		s1 = new Socket(Constants.DC_PROC1, Constants.CLIENT2_PORT);
+
 		ss3 = new ServerSocket(Constants.CLIENT3_PORT);
 		ss4 = new ServerSocket(Constants.CLIENT4_PORT);
 		ss5 = new ServerSocket(Constants.CLIENT5_PORT);
@@ -200,20 +209,77 @@ public class Client2 {
 
 	private void startChannelThreads() {
 		ClientHandler css1 = new ClientHandler(s1, myMutexImpl);
+
 		ClientHandler css3 = new ClientHandler(s3, myMutexImpl);
 		ClientHandler css4 = new ClientHandler(s4, myMutexImpl);
 		ClientHandler css5 = new ClientHandler(s5, myMutexImpl);
 
 		Thread t1 = new Thread(css1);
+
 		Thread t3 = new Thread(css3);
 		Thread t4 = new Thread(css4);
 		Thread t5 = new Thread(css5);
 
 		t1.start();
+
 		t3.start();
 		t4.start();
 		t5.start();
 
 	}
 
+	private void init() throws Exception {
+		serverList = new ArrayList<String>();
+		serverList.add(Constants.SERVER_1);
+		serverList.add(Constants.SERVER_2);
+		serverList.add(Constants.SERVER_3);
+
+		taskList = new ArrayList<String>();
+		taskList.add(Constants.WRITE);
+		taskList.add(Constants.READ);
+
+		enquireToServer();
+
+		serverToWriter = new HashMap<String, PrintWriter>();
+		serverToWriter.put(Constants.SERVER_1, writeToServer1);
+		serverToWriter.put(Constants.SERVER_2, writeToServer2);
+		serverToWriter.put(Constants.SERVER_3, writeToServer3);
+
+		serverToReader = new HashMap<String, BufferedReader>();
+		serverToReader.put(Constants.SERVER_1, readFromServer1);
+		serverToReader.put(Constants.SERVER_2, readFromServer2);
+		serverToReader.put(Constants.SERVER_3, readFromServer3);
+	}
+
+	private void setRandomRequestParams() {
+		/* For selecting file */
+		int randomInt = (int) (30.0 * Math.random());
+		if (randomInt <= 10 && randomInt >= 0)
+			FILE = serverFileList.get(0);
+		if (randomInt <= 20 && randomInt >= 11)
+			FILE = serverFileList.get(1);
+		if (randomInt <= 30 && randomInt >= 21)
+			FILE = serverFileList.get(2);
+		/* For selecting task */
+		randomInt = (int) (20.0 * Math.random());
+		if (randomInt <= 10 && randomInt >= 0)
+			TASK = taskList.get(0);
+		if (randomInt <= 20 && randomInt >= 11)
+			TASK = taskList.get(1);
+		if (Constants.READ.equalsIgnoreCase(TASK)) {
+			/* For selecting server */
+			randomInt = (int) (30.0 * Math.random());
+			if (randomInt <= 10 && randomInt >= 0)
+				SERVER = serverList.get(0);
+			if (randomInt <= 20 && randomInt >= 11)
+				SERVER = serverList.get(1);
+			if (randomInt <= 30 && randomInt >= 21)
+				SERVER = serverList.get(2);
+		}
+		if (Constants.READ.equalsIgnoreCase(TASK))
+			Utils.log(" ********* Randomly Chosen, " + "TASK:" + TASK + " ," + Utils.getServerNameFromCode(SERVER)
+					+ " ,FILE:" + FILE);
+		else
+			Utils.log(" ********* Randomly Chosen, " + "TASK:" + TASK + " ,FILE:" + FILE);
+	}
 }

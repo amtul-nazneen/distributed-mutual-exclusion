@@ -59,7 +59,6 @@ public class MutualExclusionHelper {
 
 	}
 
-	
 	@SuppressWarnings("unused")
 	public static void assignChannelWriters(MutualExclusionImpl mutexImpl, PrintWriter w1, PrintWriter w2,
 			PrintWriter w3, PrintWriter w4) {

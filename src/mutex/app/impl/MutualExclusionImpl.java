@@ -16,7 +16,7 @@ public class MutualExclusionImpl {
 	private Timestamp myRequestTimestamp;
 	private PrintWriter[] writerForChannel;
 	private ArrayList<DeferredReply> myDeferredReplies;
-	//private ArrayList<Integer> rcOptimize;
+	private ArrayList<Integer> rcOptimize;
 
 	public MutualExclusionImpl(int processnum) {
 		this.myProcessNum = processnum;
@@ -28,7 +28,7 @@ public class MutualExclusionImpl {
 		myRequestTimestamp = null;
 		writerForChannel = new PrintWriter[Constants.PROCESS_CHANNELS];
 		myDeferredReplies = new ArrayList<DeferredReply>();
-	//	rcOptimize = new ArrayList<Integer>();
+		rcOptimize = new ArrayList<Integer>();
 		myFileName = "";
 	}
 

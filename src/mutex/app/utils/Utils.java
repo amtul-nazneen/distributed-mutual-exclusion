@@ -10,6 +10,7 @@ import java.util.HashMap;
 public class Utils {
 
 	public static HashMap<String, String> hosttoprocess = new HashMap<String, String>();
+	public static HashMap<String, String> serverToName = new HashMap<String, String>();
 
 	public static String getTimestampForLog() {
 		LocalDateTime date = LocalDateTime.now(ZoneId.of(Constants.ZONE));
@@ -34,6 +35,13 @@ public class Utils {
 		return hosttoprocess.get(host.toLowerCase());
 	}
 
+	public static String getServerNameFromCode(String code) {
+		serverToName.put(Constants.SERVER_1, "Server:1");
+		serverToName.put(Constants.SERVER_2, "Server:2");
+		serverToName.put(Constants.SERVER_3, "Server:3");
+		return serverToName.get(code);
+	}
+
 	public static Timestamp getTimestamp() {
 		return new Timestamp(new Date().getTime());
 	}
@@ -49,15 +57,10 @@ public class Utils {
 		}
 		return c;
 	}
-	
-	public static void empty()
-	{
-	}
-	public static void logWithSeparator(String message)
-	{
-		String separator=" ********* ******** ******** ";
+
+	public static void logWithSeparator(String message) {
+		String separator = " ********* ******** ******** ";
 		System.out.println(getTimestampForLog() + separator + message + separator);
 	}
-	
 
 }

@@ -20,11 +20,11 @@ public class ServerHandler implements Runnable {
 	String serverFolder;
 	int clientId;
 
-	public ServerHandler(Socket socket, String serverName,int clientId) {
+	public ServerHandler(Socket socket, String serverName, int clientId) {
 		super();
 		this.socket = socket;
 		this.serverFolder = serverName;
-		this.clientId=clientId;
+		this.clientId = clientId;
 		try {
 			InputStreamReader iReader = new InputStreamReader(socket.getInputStream());
 			reader = new BufferedReader(iReader);
@@ -47,22 +47,23 @@ public class ServerHandler implements Runnable {
 
 				if (operation.equalsIgnoreCase(Constants.READ)) {
 					String file = tokens[1];
-					Utils.log("Received from Process:" + clientId + " -- Operation:" + operation + " ,File:" + file);
+					Utils.log("Received from Process:" + clientId + " -- Operation:" + operation.toUpperCase()
+							+ " ,File:" + file);
 					String lastLine = "";
-					String accessFile = Constants.FOLDER_PATH + serverFolder + "/" + file + Constants.FILE_EXT;
+					String accessFile = Constants.FOLDER_PATH + serverFolder + "/" + file;
 					filereader = new BufferedReader(new FileReader(accessFile));
 					while ((sCurrentLine = filereader.readLine()) != null) {
-						//Utils.log(sCurrentLine);
 						lastLine = sCurrentLine;
 					}
-					Utils.log("Sending Lastline to Process:" + clientId);
-					writer.println("Lastline is: " + lastLine);
+					Utils.log("Sending Lastline of " + file + " to Process:" + clientId);
+					writer.println("Lastline of " + file + " is: " + lastLine);
 				} else if (operation.equalsIgnoreCase(Constants.WRITE)) {
 					String file = tokens[1];
-					Utils.log("Received from Process:" + clientId + " -- Operation:" + operation + " File:" + file);
-					String accessFile = Constants.FOLDER_PATH + serverFolder + "/" + file + Constants.FILE_EXT;
+					Utils.log("Received from Process:" + clientId + " -- Operation:" + operation.toUpperCase()
+							+ " File:" + file);
+					String accessFile = Constants.FOLDER_PATH + serverFolder + "/" + file;
 					String clientdata = tokens[2];
-					Utils.log("Data to write from Process:" + clientId + "-- " +  clientdata);
+					Utils.log("Data to write in " + file + " from Process:" + clientId + "-- " + clientdata);
 					File f = new File(accessFile);
 					FileWriter fw = new FileWriter(f, true);
 					BufferedWriter filewriter = new BufferedWriter(fw);
@@ -70,10 +71,10 @@ public class ServerHandler implements Runnable {
 					filewriter.close();
 					fw.close();
 					Utils.log("For Process:" + clientId + ", finished Writing to File:" + file);
-					writer.println("Finished writing:-->" + "{ " + clientdata+ "} ");
+					writer.println("Finished writing to " + file + " :-->" + "{ " + clientdata + "} ");
 				} else if (operation.equalsIgnoreCase(Constants.ENQUIRE)) {
 					String processnum = tokens[1];
-					Utils.log("Received enquire from Process:" + processnum);
+					Utils.log("Received ENQUIRE from Process:" + processnum);
 					String files = null;
 					File folder = new File(serverFolder);
 					File[] listOfFiles = folder.listFiles();
@@ -86,7 +87,7 @@ public class ServerHandler implements Runnable {
 							}
 						}
 					}
-					Utils.log("Sending enquire results to Process:" + processnum);
+					Utils.log("Sending ENQUIRE results to Process:" + processnum);
 					writer.println(files);
 				}
 			}
