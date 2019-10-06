@@ -16,6 +16,13 @@ import mutex.app.impl.MutualExclusionImpl;
 import mutex.app.utils.Constants;
 import mutex.app.utils.Utils;
 
+/**
+ * @author amtul.nazneen
+ */
+
+/**
+ * Central class that handlers Client 5 actions
+ */
 public class Client5 {
 
 	MutualExclusionImpl myMutexImpl;
@@ -41,6 +48,13 @@ public class Client5 {
 	String FILE = "";
 	String TASK = "";
 
+	/**
+	 * Started method to initiate Client 2. Connects to Servers 1,2 and 3, Client
+	 * 1,2,3,4 and initialises Channel Readers and Writers. .Creates a Mutex object
+	 * that handles the RA Algorithm and optimization Generates 20 Random Requests
+	 * 
+	 * @throws Exception
+	 */
 	public void startClient5() throws Exception {
 		try {
 			connectToServer();
@@ -68,6 +82,11 @@ public class Client5 {
 		}
 	}
 
+	/**
+	 * Starter method for Requesting Critical Section Access
+	 * 
+	 * @throws Exception
+	 */
 	public void requestForCSaccess() throws Exception {
 		int attempt = counter + 1;
 		Timestamp myRequestTime = Utils.getTimestamp();
@@ -78,6 +97,14 @@ public class Client5 {
 		Utils.log("End CS_Access: " + attempt + " Timestamp: " + "[" + Utils.getTimestamp() + "]");
 	}
 
+	/**
+	 * Implements the critical section. Depending on the random request chosen,
+	 * either does a read from the server or writes to the server
+	 * 
+	 * @param processnum
+	 * @param counter
+	 * @throws Exception
+	 */
 	private void executeCriticalSection(int processnum, int counter) throws Exception {
 		int attempt = counter + 1;
 		Utils.log("======= Starting  CS_Access: [[[[[[[[[ ---- " + attempt + " ---- ]]]]]]]]] ===========");
@@ -98,6 +125,11 @@ public class Client5 {
 		// Utils.log("Executing CS Flag:" + myMutexImpl.executingCSFlag);
 	}
 
+	/**
+	 * Method to read the last line of a file from a server
+	 * 
+	 * @throws Exception
+	 */
 	private void readFromServer() throws Exception {
 		PrintWriter writeToServer = serverToWriter.get(SERVER);
 		BufferedReader readFromServer = serverToReader.get(SERVER);
@@ -114,6 +146,11 @@ public class Client5 {
 		}
 	}
 
+	/**
+	 * Method to append a line at the end of a file at all the server
+	 * 
+	 * @throws Exception
+	 */
 	private void writeToAllServers() throws Exception {
 		writeToServer1.println(Constants.WRITE + "," + FILE + "," + Constants.WRITE_MESSAGE + processnum + " at "
 				+ myMutexImpl.getMyRequestTimestamp());
@@ -152,6 +189,11 @@ public class Client5 {
 		Utils.log("Got reply from Server3:" + reply);
 	}
 
+	/**
+	 * Method to fetch the list of files from the server
+	 * 
+	 * @throws Exception
+	 */
 	private void enquireToServer() throws Exception {
 		writeToServer3.println(Constants.ENQUIRE + "," + processnum);
 		boolean gotReply = false;
@@ -170,12 +212,22 @@ public class Client5 {
 		Collections.sort(serverFileList);
 	}
 
+	/**
+	 * Method to connect to the servers
+	 * 
+	 * @throws Exception
+	 */
 	private void connectToServer() throws Exception {
 		server1 = new Socket(Constants.SERVER1_HOST, Constants.SERVER_PORT);
 		server2 = new Socket(Constants.SERVER2_HOST, Constants.SERVER_PORT);
 		server3 = new Socket(Constants.SERVER3_HOST, Constants.SERVER_PORT);
 	}
 
+	/**
+	 * Method top open sockets for other client connections
+	 * 
+	 * @throws Exception
+	 */
 	private void connectToOtherClients() throws Exception {
 		s1 = new Socket(Constants.DC_PROC1, Constants.CLIENT5_PORT);
 		s2 = new Socket(Constants.DC_PROC2, Constants.CLIENT5_PORT);
@@ -183,6 +235,11 @@ public class Client5 {
 		s4 = new Socket(Constants.DC_PROC4, Constants.CLIENT5_PORT);
 	}
 
+	/**
+	 * Method to create writers and readers for the servers
+	 * 
+	 * @throws Exception
+	 */
 	private void createServerIOStream() throws Exception {
 		writeToServer1 = new PrintWriter(server1.getOutputStream(), true);
 		readFromServer1 = new BufferedReader(new InputStreamReader(server1.getInputStream()));
@@ -192,6 +249,11 @@ public class Client5 {
 		readFromServer3 = new BufferedReader(new InputStreamReader(server3.getInputStream()));
 	}
 
+	/**
+	 * Method to create writers and readers for the client channels
+	 * 
+	 * @throws Exception
+	 */
 	private void createChannelIOStream() throws Exception {
 		w1 = new PrintWriter(s1.getOutputStream(), true);
 		r1 = new BufferedReader(new InputStreamReader(s1.getInputStream()));
@@ -203,11 +265,18 @@ public class Client5 {
 		r4 = new BufferedReader(new InputStreamReader(s4.getInputStream()));
 	}
 
+	/**
+	 * Method to create the mutex object for Client 1. Assigns the channel writers
+	 * created above to send replies to
+	 */
 	private void createMutexImplementor() throws Exception {
 		myMutexImpl = new MutualExclusionImpl(processnum);
 		MutualExclusionHelper.assignChannelWriters(myMutexImpl, w1, w2, w3, w4);
 	}
 
+	/**
+	 * Method to start and run the channel threads
+	 */
 	private void startChannelThreads() {
 		ClientHandler css1 = new ClientHandler(s1, myMutexImpl);
 		ClientHandler css2 = new ClientHandler(s2, myMutexImpl);
@@ -223,6 +292,12 @@ public class Client5 {
 		t4.start();
 	}
 
+	/**
+	 * Initialise the server file list from ENQUIRE method's response , task
+	 * operations, server names to generate randaom requests
+	 * 
+	 * @throws Exception
+	 */
 	private void init() throws Exception {
 		serverList = new ArrayList<String>();
 		serverList.add(Constants.SERVER_1);
@@ -246,6 +321,9 @@ public class Client5 {
 		serverToReader.put(Constants.SERVER_3, readFromServer3);
 	}
 
+	/**
+	 * Method to generate random requests [file,server and task]
+	 */
 	private void setRandomRequestParams() {
 		/* For selecting file */
 		int randomInt = (int) (30.0 * Math.random());

@@ -7,6 +7,13 @@ import mutex.app.client.clients.Client4;
 import mutex.app.client.clients.Client5;
 import mutex.app.utils.Utils;
 
+/**
+ * @author amtul.nazneen
+ */
+/**
+ * Orchestrator class for starting the clients, Pass the client id to start a
+ * client
+ */
 public class Client {
 
 	public static void main(String[] args) {

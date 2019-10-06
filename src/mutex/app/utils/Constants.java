@@ -1,18 +1,21 @@
 package mutex.app.utils;
 
+/**
+ * @author amtul.nazneen
+ */
+/**
+ * Utility class to hold the constants/configurations
+ */
 public class Constants {
+
+	/* No. of random requests to be generated for each client */
 	public static final int CLIENT1_CSLIMIT = 5;
 	public static final int CLIENT2_CSLIMIT = 5;
 	public static final int CLIENT3_CSLIMIT = 5;
 	public static final int CLIENT4_CSLIMIT = 5;
 	public static final int CLIENT5_CSLIMIT = 5;
 
-	public static final int CLIENT1_SLEEP = 1000;
-	public static final int CLIENT2_SLEEP = 2000;
-	public static final int CLIENT3_SLEEP = 2000;
-	public static final int CLIENT4_SLEEP = 3000;
-	public static final int CLIENT5_SLEEP = 5000;
-
+	/* Thread.sleep value for each client, between critical sections */
 	public static final int CLIENT1_CSEXEC = 3000;
 	public static final int CLIENT2_CSEXEC = 3000;
 	public static final int CLIENT3_CSEXEC = 3000;
@@ -29,7 +32,6 @@ public class Constants {
 	public static final String SERVER_3 = "s3";
 
 	public static final String FOLDER_PATH = "/home/eng/a/axn180041/mutex/";
-	// public static final String FOLDER_PATH = "/Users/amtulnazneen/Downloads/";
 	public static final String FILE_EXT = ".txt";
 	public static final String EOL = "\n";
 
@@ -44,11 +46,13 @@ public class Constants {
 	public static final int CLIENT3_PORT = 6663;
 	public static final int CLIENT4_PORT = 6664;
 	public static final int CLIENT5_PORT = 6665;
+
 	public static final String DC_PROC1 = "dc04.utdallas.edu";
 	public static final String DC_PROC2 = "dc05.utdallas.edu";
 	public static final String DC_PROC3 = "dc06.utdallas.edu";
 	public static final String DC_PROC4 = "dc07.utdallas.edu";
 	public static final String DC_PROC5 = "dc08.utdallas.edu";
+
 	public static final String SERVER1_HOST = "dc01.utdallas.edu";
 	public static final String SERVER2_HOST = "dc02.utdallas.edu";
 	public static final String SERVER3_HOST = "dc03.utdallas.edu";

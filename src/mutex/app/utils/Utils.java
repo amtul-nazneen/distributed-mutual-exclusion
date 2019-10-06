@@ -11,6 +11,13 @@ import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.HashMap;
 
+/**
+ * @author amtul.nazneen
+ */
+
+/**
+ * Utility class
+ */
 public class Utils {
 
 	public static HashMap<String, String> hosttoprocess = new HashMap<String, String>();

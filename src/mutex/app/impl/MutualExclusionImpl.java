@@ -8,6 +8,13 @@ import java.util.Collections;
 import mutex.app.utils.Constants;
 import mutex.app.utils.Utils;
 
+/**
+ * @author amtul.nazneen
+ */
+
+/**
+ * Main class for implementing Ricart-Agrawala Algorithm
+ */
 public class MutualExclusionImpl {
 	private boolean myRequestCSFlag;
 	private int myPendingReplyCount;
@@ -27,6 +34,9 @@ public class MutualExclusionImpl {
 		init();
 	}
 
+	/**
+	 * Initialise helper variables to maintain the state
+	 */
 	private void init() {
 		myPendingReplyCount = Constants.PROCESS_CHANNELS;
 		myRequestTimestamp = null;
@@ -40,6 +50,17 @@ public class MutualExclusionImpl {
 		finishedCSFlag = false;
 	}
 
+	/**
+	 * Method that's called when a client requests for CS If the CS is requested for
+	 * the first time on a resource, the request is sent to all clients If the
+	 * client has already accessed critical section once, then subsequently it sends
+	 * requests only to the processes to which it replied during or after critical
+	 * section
+	 * 
+	 * @param time
+	 * @param fileName
+	 * @return
+	 */
 	public boolean myCSRequestBegin(Timestamp time, String fileName) {
 		myRequestCSFlag = true;
 		myRequestTimestamp = time;
@@ -96,6 +117,10 @@ public class MutualExclusionImpl {
 
 	}
 
+	/**
+	 * Method that's called when the client critical section ends It sends out all
+	 * the deferred replies and clears its queue
+	 */
 	public void myCSRequestEnd() {
 		myRequestCSFlag = false;
 		myFileName = "";
@@ -110,6 +135,13 @@ public class MutualExclusionImpl {
 		myDeferredReplies.clear();
 	}
 
+	/**
+	 * Method that's called when the owning client receives a request
+	 * 
+	 * @param senderTimestamp
+	 * @param senderProcessNum
+	 * @param senderFileName
+	 */
 	public void myReceivedRequest(Timestamp senderTimestamp, int senderProcessNum, String senderFileName) {
 		Utils.log("-->Received REQUEST from Process:" + senderProcessNum + " ,SenderTimestamp:" + senderTimestamp
 				+ " ,File:" + senderFileName);
@@ -138,6 +170,9 @@ public class MutualExclusionImpl {
 		}
 	}
 
+	/**
+	 * Method that's called when the owning client receives a reply for its request
+	 */
 	public void myReceivedReply() {
 		int curr = myPendingReplyCount - 1;
 		if (curr > 0)

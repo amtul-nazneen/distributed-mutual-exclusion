@@ -13,6 +13,13 @@ import java.net.Socket;
 import mutex.app.utils.Constants;
 import mutex.app.utils.Utils;
 
+/**
+ * @author amtul.nazneen
+ */
+/**
+ * Thread Class that handles incoming and outgoing messages from the connected
+ * clients
+ */
 public class ServerHandler implements Runnable {
 	Socket socket;
 	BufferedReader reader;
@@ -20,6 +27,14 @@ public class ServerHandler implements Runnable {
 	String serverFolder;
 	int clientId;
 
+	/**
+	 * Constructor for creating a handler for communication between the server and
+	 * the client. Each connected client is run as a separate thread
+	 * 
+	 * @param socket
+	 * @param serverName
+	 * @param clientId
+	 */
 	public ServerHandler(Socket socket, String serverName, int clientId) {
 		super();
 		this.socket = socket;
@@ -34,6 +49,10 @@ public class ServerHandler implements Runnable {
 		}
 	}
 
+	/**
+	 * Thread run method that keeps checking for incoming messages from the
+	 * connected client and sends reply once the task of read/write/enquire is done
+	 */
 	@Override
 	public void run() {
 		String message;

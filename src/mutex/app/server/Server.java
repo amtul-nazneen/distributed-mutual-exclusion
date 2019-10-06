@@ -7,6 +7,14 @@ import java.net.Socket;
 import mutex.app.utils.Constants;
 import mutex.app.utils.Utils;
 
+/**
+ * @author amtul.nazneen
+ */
+
+/**
+ * Main class that runs the server. Provide the server number to start the
+ * respective server
+ */
 public class Server {
 	static int clientId = 1;
 

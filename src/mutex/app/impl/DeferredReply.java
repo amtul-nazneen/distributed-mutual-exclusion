@@ -5,11 +5,25 @@ import java.util.Comparator;
 
 import mutex.app.utils.Utils;
 
+/**
+ * @author amtul.nazneen
+ */
+
+/**
+ * Class object for DeferredReply object
+ */
 public class DeferredReply implements Comparable<DeferredReply> {
 	public boolean isDeferred;
 	private int processNum;
 	private Timestamp timestamp;
 
+	/**
+	 * Constructor for creating a deferred reply object
+	 * 
+	 * @param isDeferred: true/false
+	 * @param processNum: process num of the deferred reply
+	 * @param timestamp:  timestamp of the request before it had been deferred
+	 */
 	public DeferredReply(boolean isDeferred, int processNum, Timestamp timestamp) {
 		super();
 		this.isDeferred = isDeferred;
@@ -46,6 +60,10 @@ public class DeferredReply implements Comparable<DeferredReply> {
 		return this.processNum - o.getProcessNum();
 	}
 
+	/**
+	 * Comparator class to sort the deferred reply queues. First sorted based on
+	 * timestamp and then process num, if timestamps are the same
+	 */
 	public static final Comparator<DeferredReply> DREP_COMP = new Comparator<DeferredReply>() {
 
 		@Override

@@ -11,12 +11,27 @@ import mutex.app.impl.MutualExclusionImpl;
 import mutex.app.utils.Constants;
 import mutex.app.utils.Utils;
 
+/**
+ * @author amtul.nazneen
+ */
+
+/**
+ * Thread Class that handles incoming and outgoing request from the responsible
+ * client
+ */
 public class ClientHandler implements Runnable {
 	BufferedReader reader;
 	PrintWriter writer;
 	Socket socket;
 	MutualExclusionImpl mutexImpl;
 
+	/**
+	 * Constructor for creating a handler for communication between the clients Each
+	 * channel to the other clients, is run as a separate thread
+	 * 
+	 * @param s:         Socket connection between the clients
+	 * @param mutexImpl: mutex object of each client
+	 */
 	public ClientHandler(Socket s, MutualExclusionImpl mutexImpl) {
 		super();
 		this.socket = s;
@@ -29,6 +44,10 @@ public class ClientHandler implements Runnable {
 		}
 	}
 
+	/**
+	 * Thread run method that keeps checking for incoming requests from other
+	 * connect client and sends reply to the other client
+	 */
 	@Override
 	public void run() {
 		{

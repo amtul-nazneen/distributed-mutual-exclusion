@@ -6,8 +6,24 @@ import java.sql.Timestamp;
 import mutex.app.utils.Constants;
 import mutex.app.utils.Utils;
 
+/**
+ * @author amtul.nazneen
+ */
+
+/**
+ * Helper methods to the MutualExclusionImpl class
+ */
 public class MutualExclusionHelper {
 
+	/**
+	 * Method to send a request to another client
+	 * 
+	 * @param ownerTimestamp
+	 * @param ownerProcessnum
+	 * @param receivingProcessNum
+	 * @param fileName
+	 * @param writer
+	 */
 	public static void sendRequestToProcess(Timestamp ownerTimestamp, int ownerProcessnum, int receivingProcessNum,
 			String fileName, PrintWriter[] writer) {
 		Utils.log("-->Sending  REQUEST to Process:" + receivingProcessNum + " ,Timestamp:" + ownerTimestamp + " ,File:"
@@ -16,12 +32,34 @@ public class MutualExclusionHelper {
 		writer[x].println(Constants.REQUEST + "," + ownerTimestamp + "," + ownerProcessnum + "," + fileName);
 	}
 
+	/**
+	 * Method to send a reply to another client
+	 * 
+	 * @param receivingProcessNum
+	 * @param writer
+	 * @param ownerProcessnum
+	 */
 	public static void sendReplyToProcess(int receivingProcessNum, PrintWriter[] writer, int ownerProcessnum) {
 		Utils.log("-->Sending  REPLY to Process:" + receivingProcessNum);
 		int x = mapProcessNumToWriterIndex(ownerProcessnum, receivingProcessNum);
 		writer[x].println(Constants.REPLY + "," + receivingProcessNum);
 	}
 
+	/**
+	 * Method to help evaluate the defer condition. If the owning client has already
+	 * requested for CS access and the sending client requests for the same
+	 * resource, then request is either replied or deferred based on timestamp and
+	 * process number. If the resource is different, its replied.
+	 * 
+	 * @param requestedCSFlag
+	 * @param senderTimestamp
+	 * @param ownerTimestamp
+	 * @param senderProcessNum
+	 * @param ownerProcessNum
+	 * @param senderFileName
+	 * @param myFileName
+	 * @return
+	 */
 	public static boolean evaluateDeferCondition(boolean requestedCSFlag, Timestamp senderTimestamp,
 			Timestamp ownerTimestamp, int senderProcessNum, int ownerProcessNum, String senderFileName,
 			String myFileName) {
@@ -40,6 +78,14 @@ public class MutualExclusionHelper {
 		return defer;
 	}
 
+	/**
+	 * Generic Utility method to mapp the process number to the index in writer
+	 * array
+	 * 
+	 * @param ownerProcess
+	 * @param receivingProcessNum
+	 * @return
+	 */
 	private static int mapProcessNumToWriterIndex(int ownerProcess, int receivingProcessNum) {
 		if (receivingProcessNum > ownerProcess)
 			return receivingProcessNum - 2;
@@ -48,6 +94,13 @@ public class MutualExclusionHelper {
 
 	}
 
+	/**
+	 * Utility method to check if same resource is being requested
+	 * 
+	 * @param ownerFileName
+	 * @param senderFileName
+	 * @return
+	 */
 	private static boolean checkFileSame(String ownerFileName, String senderFileName) {
 		boolean result = false;
 		if (ownerFileName != null && !ownerFileName.isEmpty()) {
@@ -59,6 +112,15 @@ public class MutualExclusionHelper {
 
 	}
 
+	/**
+	 * Tester method
+	 * 
+	 * @param mutexImpl
+	 * @param w1
+	 * @param w2
+	 * @param w3
+	 * @param w4
+	 */
 	@SuppressWarnings("unused")
 	public static void assignChannelWriters(MutualExclusionImpl mutexImpl, PrintWriter w1, PrintWriter w2,
 			PrintWriter w3, PrintWriter w4) {
