@@ -56,6 +56,7 @@ public class Client5 {
 	 * @throws Exception
 	 */
 	public void startClient5() throws Exception {
+		Timestamp start = Utils.getTimestamp();
 		try {
 			connectToServer();
 			connectToOtherClients();
@@ -74,11 +75,15 @@ public class Client5 {
 					Utils.log(e.getMessage());
 				}
 			}
+			if (Constants.SOCKET_CLOSE && Utils.checkTimeout(start, Utils.getTimestamp()) >= 12) {
+				Utils.log("Closing all sockets");
+				closeAllSockets();
+			}
 		} catch (Exception e) {
 			Utils.log(e.getMessage());
-			server1.close();
-			server2.close();
-			server3.close();
+			closeAllSockets();
+		} finally {
+			closeAllSockets();
 		}
 	}
 
@@ -354,5 +359,21 @@ public class Client5 {
 					+ " ,FILE:" + FILE);
 		else
 			Utils.log(" ********* Randomly Chosen, " + "TASK:" + TASK + " ,FILE:" + FILE);
+	}
+
+	/**
+	 * Closing all sockets after timeout
+	 * 
+	 * @throws Exception
+	 */
+	public void closeAllSockets() throws Exception {
+		server1.close();
+		server2.close();
+		server3.close();
+		s1.close();
+		s2.close();
+		s3.close();
+		s4.close();
+		ss5.close();
 	}
 }

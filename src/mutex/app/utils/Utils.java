@@ -89,4 +89,10 @@ public class Utils {
 		System.out.println(getTimestampForLog() + separator + message + separator);
 	}
 
+	public static int checkTimeout(Timestamp start, Timestamp end) throws Exception {
+		long ms = end.getTime() - start.getTime();
+		int seconds = (int) ms / 1000;
+		int minutes = (seconds % 3600) / 60;
+		return minutes;
+	}
 }

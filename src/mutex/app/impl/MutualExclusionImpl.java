@@ -81,6 +81,7 @@ public class MutualExclusionImpl {
 		} else {
 			String reqs = "";
 			int count = 0;
+			// TODO make for loop conditional
 			for (int i = 1; i <= 5; i++) {
 				if (i != myProcessNum && requestagainF1[i]) {
 					reqs = reqs + String.valueOf(i) + ", ";
@@ -91,7 +92,7 @@ public class MutualExclusionImpl {
 			if ((reqs != null) && (reqs.length() > 0)) {
 				reqs = reqs.substring(0, reqs.length() - 1);
 			}
-			Utils.log("With optimization, sending Requests only to Process(es): " + reqs);
+			Utils.log("Optimization, For " + myFileName + " sending Requests only to Process(es): " + reqs);
 			Utils.log("Remaining Replies: " + count);
 			for (int i = 1; i <= 5; i++) {
 				if (i != myProcessNum && requestagainF1[i]) {
@@ -123,7 +124,7 @@ public class MutualExclusionImpl {
 	 */
 	public void myCSRequestEnd() {
 		myRequestCSFlag = false;
-		myFileName = "";
+		myFileName = "";// TODO store this before and keep
 
 		Collections.sort(myDeferredReplies, DeferredReply.DREP_COMP);
 		Utils.log("Total Deferred Replies:" + myDeferredReplies.size());
