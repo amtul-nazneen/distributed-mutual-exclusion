@@ -53,7 +53,7 @@ public class ClientHandler implements Runnable {
 		{
 			String message;
 			try {
-				while ((message = reader.readLine()) != null) {
+				while (reader != null && (message = reader.readLine()) != null) {
 
 					String tokens[] = message.split(",");
 					String messageType = tokens[0];
@@ -71,7 +71,7 @@ public class ClientHandler implements Runnable {
 				}
 
 			} catch (IOException e) {
-				e.printStackTrace();
+				// e.printStackTrace();
 			}
 		}
 	}

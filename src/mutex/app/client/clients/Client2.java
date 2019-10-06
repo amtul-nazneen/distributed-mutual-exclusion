@@ -76,15 +76,17 @@ public class Client2 {
 					Utils.log(e.getMessage());
 				}
 			}
-			if (Constants.SOCKET_CLOSE && Utils.checkTimeout(start, Utils.getTimestamp()) >= 12) {
+
+		} catch (Exception e) {
+			Utils.log(e.getMessage());
+		} finally {
+			if (Constants.SOCKET_CLOSE) {
+				while (Utils.checkTimeout(start, Utils.getTimestamp()) <= Constants.CLIENT_TIMEOUT + 6) {
+					Thread.sleep(30000);
+				}
 				Utils.log("Closing all sockets");
 				closeAllSockets();
 			}
-		} catch (Exception e) {
-			Utils.log(e.getMessage());
-			closeAllSockets();
-		} finally {
-			closeAllSockets();
 		}
 	}
 
@@ -113,9 +115,9 @@ public class Client2 {
 	 */
 	private void executeCriticalSection(int processnum, int counter) throws Exception {
 		int attempt = counter + 1;
-		Utils.log("======= Starting  CS_Access: [[[[[[[[[ ---- " + attempt + " ---- ]]]]]]]]] ===========");
+		Utils.log("===================== Starting  CS_Access: [[[[[[[[[ ---- " + attempt + " #### <----->" + FILE
+				+ " ---- ]]]]]]]]] =====================");
 		myMutexImpl.executingCSFlag = true;
-		// Utils.log("Executing CS Flag:" + myMutexImpl.executingCSFlag);
 		try {
 			if (Constants.READ.equalsIgnoreCase(TASK))
 				readFromServer();
@@ -125,10 +127,10 @@ public class Client2 {
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
-		Utils.log("======= Completed CS_Access: [[[[[[[[[ ---- " + attempt + " ---- ]]]]]]]]] ===========");
+		Utils.log("===================== Completed CS_Access: [[[[[[[[[ ---- " + attempt + " #### <----->" + FILE
+				+ " ---- ]]]]]]]]] =====================");
 		myMutexImpl.executingCSFlag = false;
 		myMutexImpl.finishedCSFlag = true;
-		// Utils.log("Executing CS Flag:" + myMutexImpl.executingCSFlag);
 	}
 
 	/**
@@ -268,7 +270,6 @@ public class Client2 {
 	private void createChannelIOStream() throws Exception {
 		w1 = new PrintWriter(s1.getOutputStream(), true);
 		r1 = new BufferedReader(new InputStreamReader(s1.getInputStream()));
-
 		w3 = new PrintWriter(s3.getOutputStream(), true);
 		r3 = new BufferedReader(new InputStreamReader(s3.getInputStream()));
 		w4 = new PrintWriter(s4.getOutputStream(), true);
@@ -369,10 +370,12 @@ public class Client2 {
 				SERVER = serverList.get(2);
 		}
 		if (Constants.READ.equalsIgnoreCase(TASK))
-			Utils.log(" ********* Randomly Chosen, " + "TASK:" + TASK + " ," + Utils.getServerNameFromCode(SERVER)
-					+ " ,FILE:" + FILE);
+			Utils.log(" *********>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>" + "------->" + (counter + 1)
+					+ " Randomly Chosen, " + "TASK:" + TASK + " ," + Utils.getServerNameFromCode(SERVER) + " ,FILE:"
+					+ FILE);
 		else
-			Utils.log(" ********* Randomly Chosen, " + "TASK:" + TASK + " ,FILE:" + FILE);
+			Utils.log(" *********>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>" + "------->" + (counter + 1)
+					+ " Randomly Chosen, " + "TASK:" + TASK + " ,FILE:" + FILE);
 	}
 
 	/**
@@ -380,16 +383,19 @@ public class Client2 {
 	 * 
 	 * @throws Exception
 	 */
-	public void closeAllSockets() throws Exception {
-		server1.close();
-		server2.close();
-		server3.close();
-		s1.close();
-		s3.close();
-		s4.close();
-		s5.close();
-		ss3.close();
-		ss4.close();
-		ss5.close();
+	public void closeAllSockets() {
+		try {
+			server1.close();
+			server2.close();
+			server3.close();
+			s1.close();
+			s3.close();
+			s4.close();
+			s5.close();
+			ss3.close();
+			ss4.close();
+			ss5.close();
+		} catch (Exception e) {
+		}
 	}
 }

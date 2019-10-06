@@ -24,8 +24,12 @@ public class MutualExclusionImpl {
 	private PrintWriter[] writerForChannel;
 	private ArrayList<DeferredReply> myDeferredReplies;
 	private boolean requestagainF1[];
-	private boolean myFirstCSBeginCompleted;
-	private boolean updatingrequestagainF1;
+	private boolean requestagainF2[];
+	private boolean requestagainF3[];
+	private boolean myFirstCSBeginCompletedF1;
+	private boolean myFirstCSBeginCompletedF2;
+	private boolean myFirstCSBeginCompletedF3;
+	private boolean updatingrequestagain;
 	public boolean executingCSFlag;
 	public boolean finishedCSFlag;
 
@@ -44,8 +48,12 @@ public class MutualExclusionImpl {
 		myDeferredReplies = new ArrayList<DeferredReply>();
 		myFileName = "";
 		requestagainF1 = new boolean[Constants.TOTAL_CLIENTS + 1];
-		myFirstCSBeginCompleted = false;
-		updatingrequestagainF1 = false;
+		requestagainF2 = new boolean[Constants.TOTAL_CLIENTS + 1];
+		requestagainF3 = new boolean[Constants.TOTAL_CLIENTS + 1];
+		myFirstCSBeginCompletedF1 = false;
+		myFirstCSBeginCompletedF2 = false;
+		myFirstCSBeginCompletedF3 = false;
+		updatingrequestagain = false;
 		executingCSFlag = false;
 		finishedCSFlag = false;
 	}
@@ -65,55 +73,142 @@ public class MutualExclusionImpl {
 		myRequestCSFlag = true;
 		myRequestTimestamp = time;
 		myFileName = fileName;
-		if (!myFirstCSBeginCompleted) {
-			Utils.log("First CS, Sending request to all processes");
-			myPendingReplyCount = Constants.PROCESS_CHANNELS;
+		if ((Constants.FILE1_NAME).equalsIgnoreCase(fileName)) {
+			if (!myFirstCSBeginCompletedF1) {
 
-			int total = Constants.PROCESS_CHANNELS + 1;
-			for (int i = 1; i <= total; i++) {
-				if (i != myProcessNum) {
+				Utils.log("First CS for: " + fileName + ", Sending request to all processes");
+				myPendingReplyCount = Constants.PROCESS_CHANNELS;
 
-					MutualExclusionHelper.sendRequestToProcess(myRequestTimestamp, myProcessNum, i, myFileName,
-							writerForChannel);
+				int total = Constants.PROCESS_CHANNELS + 1;
+				for (int i = 1; i <= total; i++) {
+					if (i != myProcessNum) {
+						MutualExclusionHelper.sendRequestToProcess(myRequestTimestamp, myProcessNum, i, myFileName,
+								writerForChannel);
+					}
+				}
+				myFirstCSBeginCompletedF1 = true;
+			} else {
+				Utils.log("CS for: " + fileName + " atleast completed once");
+				String reqs = "";
+				int count = 0;
+				for (int i = 1; i <= 5; i++) {
+					if (i != myProcessNum && requestagainF1[i]) {
+						reqs = reqs + String.valueOf(i) + ", ";
+						count++;
+					}
+				}
+				myPendingReplyCount = count;
+				if ((reqs != null) && (reqs.length() > 0)) {
+					reqs = reqs.substring(0, reqs.length() - 2);
+				}
+				Utils.log("Optimization, For " + myFileName + " sending Requests only to Process(es): " + reqs);
+				Utils.log("Remaining Replies: " + count);
+				for (int i = 1; i <= 5; i++) {
+					if (i != myProcessNum && requestagainF1[i]) {
+						MutualExclusionHelper.sendRequestToProcess(myRequestTimestamp, myProcessNum, i, myFileName,
+								writerForChannel);
+					}
 				}
 			}
-			myFirstCSBeginCompleted = true;
-		} else {
-			String reqs = "";
-			int count = 0;
-			// TODO make for loop conditional
-			for (int i = 1; i <= 5; i++) {
-				if (i != myProcessNum && requestagainF1[i]) {
-					reqs = reqs + String.valueOf(i) + ", ";
-					count++;
+
+		} else if ((Constants.FILE2_NAME).equalsIgnoreCase(fileName)) {
+			if (!myFirstCSBeginCompletedF2) {
+
+				Utils.log("First CS for: " + fileName + ", Sending request to all processes");
+				myPendingReplyCount = Constants.PROCESS_CHANNELS;
+
+				int total = Constants.PROCESS_CHANNELS + 1;
+				for (int i = 1; i <= total; i++) {
+					if (i != myProcessNum) {
+						MutualExclusionHelper.sendRequestToProcess(myRequestTimestamp, myProcessNum, i, myFileName,
+								writerForChannel);
+					}
+				}
+				myFirstCSBeginCompletedF2 = true;
+			} else {
+				Utils.log("CS for: " + fileName + " atleast completed once");
+				String reqs = "";
+				int count = 0;
+				for (int i = 1; i <= 5; i++) {
+					if (i != myProcessNum && requestagainF2[i]) {
+						reqs = reqs + String.valueOf(i) + ", ";
+						count++;
+					}
+				}
+				myPendingReplyCount = count;
+				if ((reqs != null) && (reqs.length() > 0)) {
+					reqs = reqs.substring(0, reqs.length() - 2);
+				}
+				Utils.log("Optimization, For " + myFileName + " sending Requests only to Process(es): " + reqs);
+				Utils.log("Remaining Replies: " + count);
+				for (int i = 1; i <= 5; i++) {
+					if (i != myProcessNum && requestagainF2[i]) {
+						MutualExclusionHelper.sendRequestToProcess(myRequestTimestamp, myProcessNum, i, myFileName,
+								writerForChannel);
+					}
 				}
 			}
-			myPendingReplyCount = count;
-			if ((reqs != null) && (reqs.length() > 0)) {
-				reqs = reqs.substring(0, reqs.length() - 1);
-			}
-			Utils.log("Optimization, For " + myFileName + " sending Requests only to Process(es): " + reqs);
-			Utils.log("Remaining Replies: " + count);
-			for (int i = 1; i <= 5; i++) {
-				if (i != myProcessNum && requestagainF1[i]) {
-					MutualExclusionHelper.sendRequestToProcess(myRequestTimestamp, myProcessNum, i, myFileName,
-							writerForChannel);
+
+		} else if ((Constants.FILE3_NAME).equalsIgnoreCase(fileName)) {
+			if (!myFirstCSBeginCompletedF3) {
+
+				Utils.log("First CS for: " + fileName + ", Sending request to all processes");
+				myPendingReplyCount = Constants.PROCESS_CHANNELS;
+
+				int total = Constants.PROCESS_CHANNELS + 1;
+				for (int i = 1; i <= total; i++) {
+					if (i != myProcessNum) {
+						MutualExclusionHelper.sendRequestToProcess(myRequestTimestamp, myProcessNum, i, myFileName,
+								writerForChannel);
+					}
+				}
+				myFirstCSBeginCompletedF3 = true;
+			} else {
+				Utils.log("CS for: " + fileName + " atleast completed once");
+				String reqs = "";
+				int count = 0;
+				for (int i = 1; i <= 5; i++) {
+					if (i != myProcessNum && requestagainF3[i]) {
+						reqs = reqs + String.valueOf(i) + ", ";
+						count++;
+					}
+				}
+				myPendingReplyCount = count;
+				if ((reqs != null) && (reqs.length() > 0)) {
+					reqs = reqs.substring(0, reqs.length() - 2);
+				}
+				Utils.log("Optimization, For " + myFileName + " sending Requests only to Process(es): " + reqs);
+				Utils.log("Remaining Replies: " + count);
+				for (int i = 1; i <= 5; i++) {
+					if (i != myProcessNum && requestagainF3[i]) {
+						MutualExclusionHelper.sendRequestToProcess(myRequestTimestamp, myProcessNum, i, myFileName,
+								writerForChannel);
+					}
 				}
 			}
+
 		}
-
 		while (myPendingReplyCount > 0) {
 			try {
-				Thread.sleep(5);
+				Thread.sleep(Constants.CHECK_PENDING_COUNT);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
 		}
-		updatingrequestagainF1 = true;
-		for (int i = 1; i <= 5; i++)
-			requestagainF1[i] = false;
-		updatingrequestagainF1 = false;
-		Utils.log("Got all replies, setting 'requestAgainQueue' to false for all processes");
+		updatingrequestagain = true;
+		if ((Constants.FILE1_NAME).equalsIgnoreCase(fileName)) {
+			for (int i = 1; i <= 5; i++)
+				requestagainF1[i] = false;
+		} else if ((Constants.FILE2_NAME).equalsIgnoreCase(fileName)) {
+			for (int i = 1; i <= 5; i++)
+				requestagainF2[i] = false;
+		} else if ((Constants.FILE3_NAME).equalsIgnoreCase(fileName)) {
+			for (int i = 1; i <= 5; i++)
+				requestagainF3[i] = false;
+		}
+		updatingrequestagain = false;
+
+		Utils.log("Got all replies for " + myFileName + ", setting 'requestAgainQueue' to false for all processes");
 		return true;
 
 	}
@@ -123,15 +218,21 @@ public class MutualExclusionImpl {
 	 * the deferred replies and clears its queue
 	 */
 	public void myCSRequestEnd() {
+		String fileName = myFileName;
 		myRequestCSFlag = false;
-		myFileName = "";// TODO store this before and keep
+		myFileName = "";
 
 		Collections.sort(myDeferredReplies, DeferredReply.DREP_COMP);
 		Utils.log("Total Deferred Replies:" + myDeferredReplies.size());
 		for (DeferredReply dr : myDeferredReplies) {
 			MutualExclusionHelper.sendReplyToProcess(dr.getProcessNum(), writerForChannel, myProcessNum);// replyTo(dr.getProcessNum());
-			requestagainF1[dr.getProcessNum()] = true;
-			// Utils.log("Added Process:" + dr.getProcessNum() + " to requestagain queue");
+			if ((Constants.FILE1_NAME).equalsIgnoreCase(fileName)) {
+				requestagainF1[dr.getProcessNum()] = true;
+			} else if ((Constants.FILE2_NAME).equalsIgnoreCase(fileName)) {
+				requestagainF2[dr.getProcessNum()] = true;
+			} else if ((Constants.FILE3_NAME).equalsIgnoreCase(fileName)) {
+				requestagainF3[dr.getProcessNum()] = true;
+			}
 		}
 		myDeferredReplies.clear();
 	}
@@ -146,7 +247,7 @@ public class MutualExclusionImpl {
 	public void myReceivedRequest(Timestamp senderTimestamp, int senderProcessNum, String senderFileName) {
 		Utils.log("-->Received REQUEST from Process:" + senderProcessNum + " ,SenderTimestamp:" + senderTimestamp
 				+ " ,File:" + senderFileName);
-		while (updatingrequestagainF1) {
+		while (updatingrequestagain) {
 			try {
 				Utils.log("Holding on..");
 				Thread.sleep(10);
@@ -162,11 +263,14 @@ public class MutualExclusionImpl {
 
 		} else {
 			MutualExclusionHelper.sendReplyToProcess(senderProcessNum, writerForChannel, myProcessNum);
-			// Utils.log("my cs request flag: " + myRequestCSFlag);
-			// Utils.log("my cs exec Flag: " + executingCSFlag);
 			if (executingCSFlag || finishedCSFlag) {
-				requestagainF1[senderProcessNum] = true;
-				// Utils.log("Added Process:" + senderProcessNum + " to request again queue");
+				if ((Constants.FILE1_NAME).equalsIgnoreCase(senderFileName)) {
+					requestagainF1[senderProcessNum] = true;
+				} else if ((Constants.FILE2_NAME).equalsIgnoreCase(senderFileName)) {
+					requestagainF2[senderProcessNum] = true;
+				} else if ((Constants.FILE3_NAME).equalsIgnoreCase(senderFileName)) {
+					requestagainF3[senderProcessNum] = true;
+				}
 			}
 		}
 	}
@@ -180,7 +284,7 @@ public class MutualExclusionImpl {
 			myPendingReplyCount = curr;
 		else
 			myPendingReplyCount = 0;
-		Utils.log("Remaining Replies: " + myPendingReplyCount);
+		Utils.log("---->Remaining Replies: " + myPendingReplyCount);
 	}
 
 	public String getFileCSAccess() {

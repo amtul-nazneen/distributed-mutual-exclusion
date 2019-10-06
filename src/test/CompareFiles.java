@@ -16,11 +16,11 @@ public class CompareFiles {
 		String fno = args[0];
 		String file = "";
 		if ("1".equals(fno)) {
-			file = Constants.FILE1 + Constants.FILE_EXT;
+			file = Constants.FILE1_NAME;
 		} else if ("2".equals(fno)) {
-			file = Constants.FILE2 + Constants.FILE_EXT;
+			file = Constants.FILE2_NAME;
 		} else if ("3".equals(fno)) {
-			file = Constants.FILE3 + Constants.FILE_EXT;
+			file = Constants.FILE3_NAME;
 		} else {
 			System.out.println("Provide 1,2 or 3");
 			return;

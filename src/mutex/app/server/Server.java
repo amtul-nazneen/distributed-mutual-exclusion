@@ -1,9 +1,7 @@
 package mutex.app.server;
 
-import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.sql.Timestamp;
 
 import mutex.app.utils.Constants;
 import mutex.app.utils.Utils;
@@ -19,8 +17,7 @@ import mutex.app.utils.Utils;
 public class Server {
 	static int clientId = 1;
 
-	public static void main(String[] args) throws IOException {
-		Timestamp start = Utils.getTimestamp();
+	public static void main(String[] args) throws Exception {
 		if (args.length < 1) {
 			Utils.log("No Server ID provided.");
 			return;
@@ -50,21 +47,13 @@ public class Server {
 				Thread t = new Thread(clientThread);
 				t.start();
 				clientId++;
-				if (Constants.SOCKET_CLOSE && Utils.checkTimeout(start, Utils.getTimestamp()) >= 10)
-					break;
 			}
-			Utils.log("Closing the socket");
-			s.close();
-			ss.close();
 		} catch (Exception e) {
 			e.printStackTrace();
-			Utils.log("Closing the socket");
-			s.close();
-			ss.close();
+
 		} finally {
-			Utils.log("Closing the socket");
-			s.close();
 			ss.close();
+			s.close();
 		}
 	}
 }

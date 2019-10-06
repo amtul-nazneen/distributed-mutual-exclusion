@@ -1,10 +1,27 @@
 package test;
 
 import java.io.File;
+import java.sql.Timestamp;
+
+import mutex.app.utils.Constants;
+import mutex.app.utils.Utils;
 
 public class TestFiles {
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws Exception {
+		if (Constants.SOCKET_CLOSE) {
+			Timestamp start = Utils.getTimestamp();
+			Thread.sleep(3000);
+			while (Utils.checkTimeout(start, Utils.getTimestamp()) <= 1) {
+				Utils.log("sleeping");
+				Thread.sleep(20000);
+			}
+			Utils.log("closing");
+		}
+		int counter = 0;
+		System.out.println(" *********>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>" + (counter + 1) + " Randomly Chosen, ");
+		System.out.println(" *********>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>" + "------->" + (counter + 1)
+				+ " Randomly Chosen, ");
 		int count1 = 0, count2 = 0, count3 = 0;
 		for (int i = 1; i <= 20; i++) {
 			int randomInt = (int) (30.0 * Math.random());

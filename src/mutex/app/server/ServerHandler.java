@@ -58,7 +58,6 @@ public class ServerHandler implements Runnable {
 		String message;
 		String sCurrentLine;
 		BufferedReader filereader;
-
 		try {
 			while ((message = reader.readLine()) != null) {
 				String tokens[] = message.split(",");
