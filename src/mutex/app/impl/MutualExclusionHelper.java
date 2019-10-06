@@ -26,7 +26,7 @@ public class MutualExclusionHelper {
 			Timestamp ownerTimestamp, int senderProcessNum, int ownerProcessNum, String senderFileName,
 			String myFileName) {
 		boolean defer = false;
-		int comparisionOutcome = Utils.compareTimestamp(senderTimestamp, ownerTimestamp);
+		int comparisionOutcome = Utils.compareTimestamp(senderTimestamp, ownerTimestamp, true);
 		boolean sameFile = checkFileSame(myFileName, senderFileName);
 		if (requestedCSFlag && sameFile) {
 			if (comparisionOutcome == 1) {

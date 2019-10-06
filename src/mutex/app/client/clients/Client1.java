@@ -77,7 +77,9 @@ public class Client1 {
 
 	private void executeCriticalSection(int processnum, int counter) throws Exception {
 		int attempt = counter + 1;
-		Utils.log("======= Starting  CS_Access: [[[[[[[[[" + attempt + "]]]]]]]]] ===========");
+		Utils.log("======= Starting  CS_Access: [[[[[[[[[ ---- " + attempt + " ---- ]]]]]]]]] ===========");
+		myMutexImpl.executingCSFlag = true;
+		// Utils.log("Executing CS Flag:" + myMutexImpl.executingCSFlag);
 		try {
 			if (Constants.READ.equalsIgnoreCase(TASK))
 				readFromServer();
@@ -87,7 +89,10 @@ public class Client1 {
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
-		Utils.log("======= Completed CS_Access: [[[[[[[[[" + attempt + "]]]]]]]]] ===========");
+		Utils.log("======= Completed CS_Access: [[[[[[[[[ ---- " + attempt + " ---- ]]]]]]]]] ===========");
+		myMutexImpl.executingCSFlag = false;
+		myMutexImpl.finishedCSFlag = true;
+		// Utils.log("Executing CS Flag:" + myMutexImpl.executingCSFlag);
 	}
 
 	private void readFromServer() throws Exception {
@@ -100,6 +105,7 @@ public class Client1 {
 			reply = readFromServer.readLine();
 			if (reply != null) {
 				Utils.log("Read from server:-->" + "{ " + reply + " } ");
+				Utils.storeToOutputFile(reply, processnum, Constants.READ);
 				gotReply = true;
 			}
 		}
@@ -121,6 +127,8 @@ public class Client1 {
 			}
 		}
 		Utils.log("Got reply from Server1:" + reply);
+		Utils.storeToOutputFile(Constants.WRITE_MESSAGE + processnum + " at " + myMutexImpl.getMyRequestTimestamp(),
+				processnum, Constants.WRITE);
 
 		gotReply = false;
 		while (!gotReply) {
@@ -151,7 +159,7 @@ public class Client1 {
 				gotReply = true;
 			}
 		}
-		Utils.log("Saving enquired server files");
+		Utils.log("Storing ENQUIRE Results");
 		String temp[] = reply.split(",");
 		serverFileList = new ArrayList<String>();
 		for (int i = 0; i < temp.length; i++)

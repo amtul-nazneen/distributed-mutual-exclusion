@@ -1,5 +1,9 @@
 package mutex.app.utils;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -21,9 +25,19 @@ public class Utils {
 		System.out.println(getTimestampForLog() + " " + message);
 	}
 
-	public static void log(String message, boolean display) {
-		if (display)
-			System.out.println(getTimestampForLog() + " " + message);
+	public static void storeToOutputFile(String message, int process, String task) {
+		String file = Constants.FOLDER_PATH + Constants.OUTPUT_FILE;
+		try {
+			File f = new File(file);
+			FileWriter fw = new FileWriter(f, true);
+			BufferedWriter filewriter = new BufferedWriter(fw);
+			String data = "Process:" + process + " " + task.toUpperCase() + " {{ " + message + " }} ";
+			filewriter.write(data + Constants.EOL);
+			filewriter.close();
+			fw.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 	public static String getProcessFromHost(String host) {
@@ -46,7 +60,12 @@ public class Utils {
 		return new Timestamp(new Date().getTime());
 	}
 
-	public static int compareTimestamp(Timestamp t1, Timestamp t2) {
+	public static int compareTimestamp(Timestamp t1, Timestamp t2, boolean print) {
+		if (t1 == null && t2 == null)
+			return 0;
+		if (t1 != null && t2 == null)
+			return -1;
+
 		int c = 0;
 		if (t1.after(t2)) {
 			c = 1;

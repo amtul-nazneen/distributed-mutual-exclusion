@@ -1,11 +1,11 @@
 package mutex.app.utils;
 
 public class Constants {
-	public static final int CLIENT1_CSLIMIT = 20;
-	public static final int CLIENT2_CSLIMIT = 20;
-	public static final int CLIENT3_CSLIMIT = 20;
-	public static final int CLIENT4_CSLIMIT = 20;
-	public static final int CLIENT5_CSLIMIT = 20;
+	public static final int CLIENT1_CSLIMIT = 5;
+	public static final int CLIENT2_CSLIMIT = 5;
+	public static final int CLIENT3_CSLIMIT = 5;
+	public static final int CLIENT4_CSLIMIT = 5;
+	public static final int CLIENT5_CSLIMIT = 5;
 
 	public static final int CLIENT1_SLEEP = 1000;
 	public static final int CLIENT2_SLEEP = 2000;
@@ -20,6 +20,7 @@ public class Constants {
 	public static final int CLIENT5_CSEXEC = 3000;
 
 	public static final int PROCESS_CHANNELS = 4;
+	public static final int TOTAL_CLIENTS = 5;
 
 	public static final String WRITE_MESSAGE = "Written by Process:";
 
@@ -36,6 +37,7 @@ public class Constants {
 	public static final String FILE2 = "file2";
 	public static final String FILE3 = "file3";
 	public static final String FILE4 = "file4";
+	public static final String OUTPUT_FILE = "Output.txt";
 
 	public static final int SERVER_PORT = 6666;
 	public static final int CLIENT2_PORT = 6662;

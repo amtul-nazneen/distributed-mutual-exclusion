@@ -50,7 +50,7 @@ public class DeferredReply implements Comparable<DeferredReply> {
 
 		@Override
 		public int compare(DeferredReply o1, DeferredReply o2) {
-			int c = Utils.compareTimestamp(o1.getTimestamp(), o2.getTimestamp());
+			int c = Utils.compareTimestamp(o1.getTimestamp(), o2.getTimestamp(), false);
 			if (c == 0)
 				c = o1.getProcessNum() - o2.getProcessNum();
 			return c;
