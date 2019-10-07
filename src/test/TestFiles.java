@@ -9,7 +9,7 @@ import mutex.app.utils.Utils;
 public class TestFiles {
 
 	public static void main(String[] args) throws Exception {
-		if (Constants.SOCKET_CLOSE) {
+		if (Constants.ENABLE_SOCKET_CLOSE) {
 			Timestamp start = Utils.getTimestamp();
 			Thread.sleep(3000);
 			while (Utils.checkTimeout(start, Utils.getTimestamp()) <= 1) {

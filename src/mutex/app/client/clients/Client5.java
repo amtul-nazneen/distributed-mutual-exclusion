@@ -78,7 +78,7 @@ public class Client5 {
 		} catch (Exception e) {
 			Utils.log(e.getMessage());
 		} finally {
-			if (Constants.SOCKET_CLOSE) {
+			if (Constants.ENABLE_SOCKET_CLOSE) {
 				while (Utils.checkTimeout(start, Utils.getTimestamp()) <= Constants.CLIENT_TIMEOUT) {
 					Thread.sleep(30000);
 				}
@@ -146,7 +146,7 @@ public class Client5 {
 			reply = readFromServer.readLine();
 			if (reply != null) {
 				Utils.log("Read from server:-->" + "{ " + reply + " } ");
-				Utils.storeToOutputFile(reply, processnum, Constants.READ);
+				Utils.storeToOutputFile(reply, processnum, Constants.READ, FILE);
 				gotReply = true;
 			}
 		}
@@ -174,7 +174,7 @@ public class Client5 {
 		}
 		Utils.log("Got reply from Server1:" + reply);
 		Utils.storeToOutputFile(Constants.WRITE_MESSAGE + processnum + " at " + myMutexImpl.getMyRequestTimestamp(),
-				processnum, Constants.WRITE);
+				processnum, Constants.WRITE, FILE);
 
 		gotReply = false;
 		while (!gotReply) {

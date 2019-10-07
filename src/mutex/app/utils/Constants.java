@@ -11,11 +11,11 @@ public class Constants {
 	 * ------ Section I: Begin of: No. of random requests to be generated for each
 	 * client ------
 	 */
-	public static final int CLIENT1_CSLIMIT = 20;
-	public static final int CLIENT2_CSLIMIT = 20;
-	public static final int CLIENT3_CSLIMIT = 20;
-	public static final int CLIENT4_CSLIMIT = 20;
-	public static final int CLIENT5_CSLIMIT = 20;
+	public static final int CLIENT1_CSLIMIT = 25;
+	public static final int CLIENT2_CSLIMIT = 25;
+	public static final int CLIENT3_CSLIMIT = 25;
+	public static final int CLIENT4_CSLIMIT = 25;
+	public static final int CLIENT5_CSLIMIT = 25;
 
 	/* ------ Section II: Begin of DC machines to program model mapping ------ */
 	public static final int SERVER_PORT = 6666;
@@ -39,15 +39,15 @@ public class Constants {
 	 */
 	public static final int CLIENT1_CSEXEC = 3000;
 	public static final int CLIENT2_CSEXEC = 2000;
-	public static final int CLIENT3_CSEXEC = 3000;
+	public static final int CLIENT3_CSEXEC = 3500;
 	public static final int CLIENT4_CSEXEC = 4000;
 	public static final int CLIENT5_CSEXEC = 5000;
 	/*
 	 * ------ Section IV: Begin of:Misc. configurations ------
 	 */
-	public static final boolean SOCKET_CLOSE = true;
+	public static final boolean ENABLE_SOCKET_CLOSE = true;
 	public static final int CLIENT_TIMEOUT = 10;
-	public static final int SERVER_TIMEOUT = 15;
+	public static final int SERVER_TIMEOUT = 20;
 	/*
 	 * ------ Section V: Begin of:Misc. configurations ------
 	 */

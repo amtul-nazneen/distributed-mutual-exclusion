@@ -34,7 +34,6 @@ public class Server {
 			serverName = Constants.SERVER_3;
 			Utils.logWithSeparator("Starting Server:3");
 		}
-
 		ServerSocket ss = null;
 		Socket s = null;
 
@@ -47,13 +46,14 @@ public class Server {
 				Thread t = new Thread(clientThread);
 				t.start();
 				clientId++;
+
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
 
 		} finally {
-			ss.close();
 			s.close();
+			ss.close();
 		}
 	}
 }

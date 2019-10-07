@@ -60,10 +60,10 @@ public class MutualExclusionImpl {
 
 	/**
 	 * Method that's called when a client requests for CS If the CS is requested for
-	 * the first time on a resource, the request is sent to all clients If the
-	 * client has already accessed critical section once, then subsequently it sends
-	 * requests only to the processes to which it replied during or after critical
-	 * section
+	 * the first time on a resource, the request is sent to all clients. If the
+	 * client has already accessed critical section once for a particular resource,
+	 * then subsequently it sends requests only to the processes to which it replied
+	 * during or after critical section [the RC optimization]
 	 * 
 	 * @param time
 	 * @param fileName

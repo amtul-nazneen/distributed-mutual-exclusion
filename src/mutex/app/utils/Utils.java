@@ -32,13 +32,14 @@ public class Utils {
 		System.out.println(getTimestampForLog() + " " + message);
 	}
 
-	public static void storeToOutputFile(String message, int process, String task) {
+	public static void storeToOutputFile(String message, int process, String task, String fileName) {
 		String file = Constants.FOLDER_PATH + Constants.OUTPUT_FILE;
 		try {
 			File f = new File(file);
 			FileWriter fw = new FileWriter(f, true);
 			BufferedWriter filewriter = new BufferedWriter(fw);
-			String data = "Process:" + process + " " + task.toUpperCase() + " {{ " + message + " }} ";
+			String data = "Process:" + process + " " + task.toUpperCase() + " " + fileName.toUpperCase() + " {{ "
+					+ message + " }} ";
 			filewriter.write(data + Constants.EOL);
 			filewriter.close();
 			fw.close();
