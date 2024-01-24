@@ -1,5 +1,6 @@
 package mutex.app.client;
 
+import io.github.pixee.security.BoundedLineReader;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -53,7 +54,7 @@ public class ClientHandler implements Runnable {
 		{
 			String message;
 			try {
-				while (reader != null && (message = reader.readLine()) != null) {
+				while (reader != null && (message = BoundedLineReader.readLine(reader, 5_000_000)) != null) {
 
 					String tokens[] = message.split(",");
 					String messageType = tokens[0];

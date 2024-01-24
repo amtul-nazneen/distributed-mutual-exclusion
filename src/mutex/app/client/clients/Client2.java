@@ -1,5 +1,6 @@
 package mutex.app.client.clients;
 
+import io.github.pixee.security.BoundedLineReader;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
@@ -145,7 +146,7 @@ public class Client2 {
 		String reply;
 		boolean gotReply = false;
 		while (!gotReply) {
-			reply = readFromServer.readLine();
+			reply = BoundedLineReader.readLine(readFromServer, 5_000_000);
 			if (reply != null) {
 				Utils.log("Read from server:-->" + "{ " + reply + " } ");
 				Utils.storeToOutputFile(reply, processnum, Constants.READ, FILE);
@@ -169,7 +170,7 @@ public class Client2 {
 		String reply = null;
 		boolean gotReply = false;
 		while (!gotReply) {
-			reply = readFromServer1.readLine();
+			reply = BoundedLineReader.readLine(readFromServer1, 5_000_000);
 			if (reply != null) {
 				gotReply = true;
 			}
@@ -180,7 +181,7 @@ public class Client2 {
 
 		gotReply = false;
 		while (!gotReply) {
-			reply = readFromServer2.readLine();
+			reply = BoundedLineReader.readLine(readFromServer2, 5_000_000);
 			if (reply != null) {
 				gotReply = true;
 			}
@@ -189,7 +190,7 @@ public class Client2 {
 
 		gotReply = false;
 		while (!gotReply) {
-			reply = readFromServer3.readLine();
+			reply = BoundedLineReader.readLine(readFromServer3, 5_000_000);
 			if (reply != null) {
 				gotReply = true;
 			}
@@ -207,7 +208,7 @@ public class Client2 {
 		boolean gotReply = false;
 		String reply = "";
 		while (!gotReply) {
-			reply = readFromServer1.readLine();
+			reply = BoundedLineReader.readLine(readFromServer1, 5_000_000);
 			if (reply != null) {
 				gotReply = true;
 			}
