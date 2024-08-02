@@ -1,5 +1,6 @@
 package mutex.app.server;
 
+import io.github.pixee.security.BoundedLineReader;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -59,7 +60,7 @@ public class ServerHandler implements Runnable {
 		String sCurrentLine;
 		BufferedReader filereader;
 		try {
-			while ((message = reader.readLine()) != null) {
+			while ((message = BoundedLineReader.readLine(reader, 5_000_000)) != null) {
 				String tokens[] = message.split(",");
 				String operation = tokens[0];
 
@@ -70,7 +71,7 @@ public class ServerHandler implements Runnable {
 					String lastLine = "";
 					String accessFile = Constants.FOLDER_PATH + serverFolder + "/" + file;
 					filereader = new BufferedReader(new FileReader(accessFile));
-					while ((sCurrentLine = filereader.readLine()) != null) {
+					while ((sCurrentLine = BoundedLineReader.readLine(filereader, 5_000_000)) != null) {
 						lastLine = sCurrentLine;
 					}
 					Utils.log("Sending Lastline of " + file + " to Process:" + clientId);
